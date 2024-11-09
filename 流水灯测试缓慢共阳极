@@ -1,0 +1,42 @@
+#include <reg52.h>
+
+// 定义延时函数
+void delay(unsigned int time) {
+    unsigned int i, j;
+    for (i = 0; i < time; i++)
+        for (j = 0; j < 1275; j++);
+}
+
+// 主函数
+void main() {
+    unsigned char ledIndex = 0; // 用于记录当前要点亮的LED位置
+
+    while (1) {
+        // 先将所有端口设置为高电平（共阳极，高电平灭灯）
+        P0 = 0xFF;
+        P1 = 0xFF;
+        P2 = 0xFF;
+        P3 = 0xFF;
+
+        // 根据ledIndex确定要点亮的LED位置并设置为低电平
+        if (ledIndex < 8) {
+            P0 &= ~(1 << ledIndex);
+        } else if (ledIndex < 16) {
+            ledIndex -= 8;
+            P1 &= ~(1 << ledIndex);
+        } else if (ledIndex < 24) {
+            ledIndex -= 16;
+            P2 &= ~(1 << ledIndex);
+        } else {
+            ledIndex -= 24;
+            P3 &= ~(1 << ledIndex);
+        }
+
+        delay(500); // 延时一段时间，可根据实际效果调整延时时间
+
+        ledIndex++;
+        if (ledIndex >= 32) {
+            ledIndex = 0;
+        }
+    }
+}
