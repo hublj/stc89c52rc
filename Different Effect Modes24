@@ -1,0 +1,221 @@
+#include <reg52.h>
+#include <stdlib.h>
+
+
+// 定义端口
+#define LED_PORT P0
+#define LED_PORT1 P1
+#define LED_PORT2 P2
+
+// 延时函数，针对 11.0592MHz 晶振优化
+void delay(unsigned int time) {
+    unsigned int i, j;
+    for (i = 0; i < time; i++)
+        for (j = 0; j < 123; j++);  // 针对 11.0592MHz 调整了内层循环次数
+}
+
+// 普通流水灯模式
+void normal_flow() {
+    unsigned char i;
+    for (i = 0; i < 24; i++) {
+        if (i < 8) {
+            LED_PORT = ~(0x01 << i);
+            LED_PORT1 = 0xff;
+            LED_PORT2 = 0xff;
+        } else if (i < 16) {
+            LED_PORT = 0xff;
+            LED_PORT1 = ~(0x01 << (i - 8));
+            LED_PORT2 = 0xff;
+        } else {
+            LED_PORT = 0xff;
+            LED_PORT1 = 0xff;
+            LED_PORT2 = ~(0x01 << (i - 16));
+        }
+        delay(200);  // 调整延时时间
+    }
+}
+
+// 从下往上点亮模式
+void bottom_to_top() {
+    unsigned char i;
+    for (i = 0; i < 24; i++) {
+        if (i < 8) {
+            LED_PORT = ~(0x80 >> i);
+            LED_PORT1 = 0xff;
+            LED_PORT2 = 0xff;
+        } else if (i < 16) {
+            LED_PORT = 0xff;
+            LED_PORT1 = ~(0x80 >> (i - 8));
+            LED_PORT2 = 0xff;
+        } else {
+            LED_PORT = 0xff;
+            LED_PORT1 = 0xff;
+            LED_PORT2 = ~(0x80 >> (i - 16));
+        }
+        delay(200);
+    }
+}
+
+// 从上往下点亮模式
+void top_to_bottom() {
+    unsigned char i;
+    for (i = 0; i < 24; i++) {
+        if (i < 8) {
+            LED_PORT = ~(0x01 << i);
+            LED_PORT1 = 0xff;
+            LED_PORT2 = 0xff;
+        } else if (i < 16) {
+            LED_PORT = 0xff;
+            LED_PORT1 = ~(0x01 << (i - 8));
+            LED_PORT2 = 0xff;
+        } else {
+            LED_PORT = 0xff;
+            LED_PORT1 = 0xff;
+            LED_PORT2 = ~(0x01 << (i - 16));
+        }
+        delay(200);
+    }
+}
+
+// 顺时针心形模式
+void clockwise_heart() {
+    unsigned char i;
+    for (i = 0; i < 24; i++) {
+        if (i < 8) {
+            LED_PORT = ~(0x01 << i);
+            LED_PORT1 = 0xff;
+            LED_PORT2 = 0xff;
+        } else if (i < 16) {
+            LED_PORT = 0xff;
+            LED_PORT1 = ~(0x01 << (i - 8));
+            LED_PORT2 = 0xff;
+        } else {
+            LED_PORT = 0xff;
+            LED_PORT1 = 0xff;
+            LED_PORT2 = ~(0x01 << (i - 16));
+        }
+        delay(150);
+    }
+}
+// 逆时针心形模式
+void counter_clockwise_heart() {
+    unsigned char i;
+    for (i = 0; i < 24; i++) {
+        if (i < 8) {
+            LED_PORT = ~(0x80 >> i);
+            LED_PORT1 = 0xff;
+            LED_PORT2 = 0xff;
+        } else if (i < 16) {
+            LED_PORT = 0xff;
+            LED_PORT1 = ~(0x80 >> (i - 8));
+            LED_PORT2 = 0xff;
+        } else {
+            LED_PORT = 0xff;
+            LED_PORT1 = 0xff;
+            LED_PORT2 = ~(0x80 >> (i - 16));
+        }
+        delay(150);
+    }
+}
+
+// 两边同时点亮及消隐模式
+void both_sides_light() {
+    unsigned char i;
+    for (i = 0; i < 12; i++) {
+        unsigned char value = ~((0x01 << i) | (0x01 << (23 - i)));
+        if (i < 8) {
+            LED_PORT = value & 0xff;
+            if (23 - i < 8) {
+                LED_PORT |= (value >> 8) & 0xff;
+            }
+            LED_PORT1 = 0xff;
+            LED_PORT2 = 0xff;
+        } else if (i < 12) {
+            LED_PORT = 0xff;
+            LED_PORT1 = value & 0xff;
+            if (23 - i < 16) {
+                LED_PORT1 |= (value >> 8) & 0xff;
+            }
+            LED_PORT2 = 0xff;
+        }
+        delay(200);
+    }
+}
+
+// 流星滑落模式
+void meteor_fall() {
+    unsigned char i, j;
+    for (j = 0; j < 5; j++) {  // 流星滑落次数
+        for (i = 0; i < 24; i++) {
+            if (i < 8) {
+                LED_PORT = ~(0x80 >> i);
+                LED_PORT1 = 0xff;
+                LED_PORT2 = 0xff;
+            } else if (i < 16) {
+                LED_PORT = 0xff;
+                LED_PORT1 = ~(0x80 >> (i - 8));
+                LED_PORT2 = 0xff;
+            } else {
+                LED_PORT = 0xff;
+                LED_PORT1 = 0xff;
+                LED_PORT2 = ~(0x80 >> (i - 16));
+            }
+            delay(80);
+        }
+    }
+}
+// 心跳闪烁模式
+void heartbeat_flash() {
+    unsigned char i;
+    for (i = 0; i < 10; i++) {
+        LED_PORT = 0x00;
+        LED_PORT1 = 0x00;
+        LED_PORT2 = 0x00;
+        delay(150);
+        LED_PORT = 0xff;
+        LED_PORT1 = 0xff;
+        LED_PORT2 = 0xff;
+        if (i < 5) {
+            delay(200);
+        } else {
+            delay(150);
+        }
+    }
+}
+
+// 随机闪烁模式
+void random_blink() {
+    unsigned char i, pos;
+    for (i = 0; i < 20; i++) {
+        pos = rand() % 24;
+        if (pos < 8) {
+            LED_PORT = ~(0x01 << pos);
+            LED_PORT1 = 0xff;
+            LED_PORT2 = 0xff;
+        } else if (pos < 16) {
+            LED_PORT = 0xff;
+            LED_PORT1 = ~(0x01 << (pos - 8));
+            LED_PORT2 = 0xff;
+        } else {
+            LED_PORT = 0xff;
+            LED_PORT1 = 0xff;
+            LED_PORT2 = ~(0x01 << (pos - 16));
+        }
+        delay(100);
+    }
+}
+
+// 主函数
+void main() {
+    while (1) {
+        normal_flow();
+        bottom_to_top();
+        top_to_bottom();
+        clockwise_heart();
+        counter_clockwise_heart();
+        both_sides_light();
+        meteor_fall();
+        heartbeat_flash();
+        random_blink();
+    }
+}
