@@ -1,0 +1,259 @@
+#include<reg52.h>
+#include<intrins.h> //库函数
+#define uint unsigned int
+#define uchar unsigned char//宏定义
+void delay(uint xms)//延时函数
+{
+              uint i,j;
+              for(i=xms;i>0;i--)
+                            for(j=110;j>0;j--);
+}
+void zys(uint t)//左右闪烁
+{
+              while(t--)
+              {
+                            P3=P2=0x00;
+                            delay(500);
+                            P3=P2=0xff;
+                            P1=P0=0x00;
+                            delay(500);
+                            P1=P0=0xff;
+              }
+}
+void qs(uint t)//全部闪亮
+{
+              while(t--)
+              {
+                            P0=P1=P2=P3=0xff;
+                            delay(300);
+                            P0=P1=P2=P3=0x00;
+                            delay(300);
+              }
+              P1=P2=P3=P0=0xff;
+}
+void ycdl(uint t)//依次点亮
+{
+              uchar code table[]={0xfe,0xfc,0xf8,0xf0,0xe0,0xc0,0x80,0x00};
+              uint i;
+              while(t--)
+              {
+                            for(i=0;i<8;i++)
+                                          {
+                                                        P0=table[i];
+                                                        delay(200);
+                                          }
+                            for(i=0;i<8;i++)
+                                          {
+                                                        P1=table[i];
+                                                        delay(200);
+                                          }
+                            for(i=0;i<8;i++)
+                                          {
+                                                        P2=table[i];
+                                                        delay(200);
+                                          }
+                            for(i=0;i<8;i++)
+                                          {
+                                                        P3=table[i];
+                                                        delay(200);
+                                          }
+              }
+}
+void ycxm (uint t)//依次熄灭
+{
+                            uchar code table[]={0xfe,0xfc,0xf8,0xf0,0xe0,0xc0,0x80,0x00};
+              uint i;
+              while(t--)
+              {
+                            P0=P1=P2=P3=0x00;
+                            for(i=0;i<8;i++)
+                                          {
+                                                        P0=~table[i];
+                                                        delay(200);
+                                          }
+                            for(i=0;i<8;i++)
+                                          {
+                                                        P1=~table[i];
+                                                        delay(200);
+                                          }
+                            for(i=0;i<8;i++)
+                                          {
+                                                        P2=~table[i];
+                                                        delay(200);
+                                          }
+                            for(i=0;i<8;i++)
+                                          {
+                                                        P3=~table[i];
+                                                        delay(200);
+                                          }
+              }
+}
+void jgs(uint t)//间隔闪烁
+{
+              while(t--)
+              {
+                            P0=P1=P2=P3=0xaa;
+                            delay(500);
+                            P0=P1=P2=P3=~0xaa;
+                            delay(500);
+              }
+              P0=P1=P2=P3=0xff;
+              delay(200);
+}
+ 
+void sszs(uint t)//顺时针闪烁
+{
+              uchar a,i;
+              while(t--)
+              {
+                            a=0xfe;
+                            for(i=0;i<8;i++)
+                            {
+                                          P0=a;
+                                          delay(200);
+                                          a=_crol_(a,1);
+                            }
+                            P0=0xff;
+                            a=0xfe;
+                            for(i=0;i<8;i++)
+                            {
+                                          P1=a;
+                                          delay(200);
+                                          a=_crol_(a,1);
+                            }
+                            P1=0xff;
+                            a=0xfe;
+                            for(i=0;i<8;i++)
+                            {
+                                          P2=a;
+                                          delay(200);
+                                          a=_crol_(a,1);
+                            }
+                            P2=0xff;
+                            a=0xfe;
+                            for(i=0;i<8;i++)
+                            {
+                                          P3=a;
+                                          delay(200);
+                                          a=_crol_(a,1);
+                            }
+                            P3=0xff;
+              }
+}
+void nszs(uint t)//逆时针闪烁
+{
+              uchar a,i;
+              while(t--)
+              {
+                            a=0x7f;
+                            for(i=0;i<8;i++)
+                            {
+                                          P3=a;
+                                          delay(200);
+                                          a=_cror_(a,1);
+                            }
+                            P3=0xff;
+                            a=0x7f;
+                            for(i=0;i<8;i++)
+                            {
+                                          P2=a;
+                                          delay(200);
+                                          a=_cror_(a,1);
+                            }
+                            P2=0xff;
+                            a=0x7f;
+                            for(i=0;i<8;i++)
+                            {
+                                          P1=a;
+                                          delay(200);
+                                          a=_cror_(a,1);
+                            }
+                            P1=0xff;
+                            a=0x7f;
+                            for(i=0;i<8;i++)
+                            {
+                                          P0=a;
+                                          delay(200);
+                                          a=_cror_(a,1);
+                            }
+                            P0=0xff;
+              }
+}
+void djs1(uint t)//对角闪烁2个顺时针
+{
+              uchar i;
+              uchar code table[]={0xf0,0xe1,0xc3,0x87,0x0f,0x1f,0x3f,0x7f,
+                                                                                                                                                          0xff,0xff,0xff,0xff,0xff,0xfe,0xfc,0xf8,0xf0,
+                                                                                                                                                          0xff,0xff,0xff,0xff,0xff,0xfe,0xfc,0xf8,
+                                                                                                                                                          0xf0,0xe1,0xc3,0x87,0x0f,0x1f,0x3f,0x7f,0xff};
+              while(t--)
+              {
+                            for(i=0;i<17;i++)
+                                          {
+                                                        P0=P2=table[i];
+                                                        P1=P3=table[i+17];
+                                                        delay(200);
+                                          }
+                            for(i=0;i<17;i++)
+                                          {
+                                                        P1=P3=table[i+17];
+                                                        P0=P2=table[i];
+                                                        delay(200);
+                                          }
+              }
+              delay(300);
+              P0=P1=P2=P3=0xff;
+}
+void djs2(uint t)//对角闪4个逆时针
+{
+              uchar i;
+              uchar code table[]={0x0f,0x87,0xc3,0xe1,0xf0,0x78,0x3c,0x1e,0x0f};
+              while(t--)
+              {
+                            for(i=0;i<9;i++)
+                                          {
+                                                        P1=P2=P3=P0=table[i];
+                                                        delay(200);
+                                          }
+              }
+}
+void sxhx(uint t)//从上往下画心
+{
+              uchar code table[]={0xfe,0xfc,0xf8,0xf0,0xe0,0xc0,0x80,0x00,
+                                                                                                                                                          0x7f,0x3f,0x1f,0x0f,0x07,0x03,0x01,0x00};
+              uint i;
+              while(t--)
+              {
+                            for(i=0;i<8;i++)
+                                          {
+                                                        P0=table[i];
+                                                        P3=table[i+8];
+                                                        delay(200);
+                                          }
+                            for(i=0;i<8;i++)
+                                          {
+                                                        P1=table[i];
+                                                        P2=table[i+8];
+                                                        delay(200);
+                                          }
+                            P1=P2=P3=P0=0xff;
+                            delay(300);
+              }
+}
+ 
+void main()
+{
+while(1)
+{
+ycdl(1);
+              ycxm(1);
+              jgs(3);
+              sszs(1);
+              nszs(1);
+              djs1(1);
+                            djs2(3);
+                            zys(3);
+                            sxhx(1);
+                            qs(3);
+}
+}
