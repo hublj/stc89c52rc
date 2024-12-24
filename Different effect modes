@@ -5,48 +5,39 @@
 #define LED_PORT P0
 #define LED_PORT1 P1
 #define LED_PORT2 P2
-#define LED_PORT3 P3
 
-// 延时函数
+// 针对11.0592MHz晶振优化的延时函数
 void delay(unsigned int time) {
     unsigned int i, j;
     for (i = 0; i < time; i++)
-        for (j = 0; j < 1275; j++);
+        for (j = 0; j < 123; j++);
 }
 
 // 逐位点亮效果
 void single_light() {
     unsigned char i;
-    for (i = 0; i < 32; i++) {
+    for (i = 0; i < 24; i++) {
         if (i < 8) {
             LED_PORT = ~(0x01 << i);
             LED_PORT1 = 0xff;
             LED_PORT2 = 0xff;
-            LED_PORT3 = 0xff;
         } else if (i < 16) {
             LED_PORT = 0xff;
             LED_PORT1 = ~(0x01 << (i - 8));
             LED_PORT2 = 0xff;
-            LED_PORT3 = 0xff;
-        } else if (i < 24) {
-            LED_PORT = 0xff;
-            LED_PORT1 = 0xff;
-            LED_PORT2 = ~(0x01 << (i - 16));
-            LED_PORT3 = 0xff;
         } else {
             LED_PORT = 0xff;
             LED_PORT1 = 0xff;
-            LED_PORT2 = 0xff;
-            LED_PORT3 = ~(0x01 << (i - 24));
+            LED_PORT2 = ~(0x01 << (i - 16));
         }
-        delay(20000);
+        delay(200);
     }
 }
 
 // 隔位点亮效果
 void alternate_light() {
     unsigned char i;
-    for (i = 0; i < 32; i += 2) {
+    for (i = 0; i < 24; i += 2) {
         if (i < 8) {
             LED_PORT = ~(0x01 << i);
             if (i + 1 < 8) {
@@ -54,7 +45,6 @@ void alternate_light() {
             }
             LED_PORT1 = 0xff;
             LED_PORT2 = 0xff;
-            LED_PORT3 = 0xff;
         } else if (i < 16) {
             LED_PORT = 0xff;
             LED_PORT1 = ~(0x01 << (i - 8));
@@ -62,51 +52,39 @@ void alternate_light() {
                 LED_PORT1 |= ~(0x01 << ((i + 1) - 8));
             }
             LED_PORT2 = 0xff;
-            LED_PORT3 = 0xff;
-        } else if (i < 24) {
+        } else {
             LED_PORT = 0xff;
             LED_PORT1 = 0xff;
             LED_PORT2 = ~(0x01 << (i - 16));
             if (i + 1 < 24) {
                 LED_PORT2 |= ~(0x01 << ((i + 1) - 16));
             }
-            LED_PORT3 = 0xff;
-        } else {
-            LED_PORT = 0xff;
-            LED_PORT1 = 0xff;
-            LED_PORT2 = 0xff;
-            LED_PORT3 = ~(0x01 << (i - 24));
-            if (i + 1 < 32) {
-                LED_PORT3 |= ~(0x01 << ((i + 1) - 24));
-            }
         }
-        delay(20000);
+        delay(200);
     }
 }
 
 // 对称点亮效果
 void symmetric_light() {
     unsigned char i;
-    for (i = 0; i < 16; i++) {
-        unsigned char value = ~((0x01 << i) | (0x01 << (31 - i)));
+    for (i = 0; i < 12; i++) {
+        unsigned char value = ~((0x01 << i) | (0x01 << (23 - i)));
         if (i < 8) {
             LED_PORT = value & 0xff;
-            if (31 - i < 8) {
+            if (23 - i < 8) {
                 LED_PORT |= (value >> 8) & 0xff;
             }
             LED_PORT1 = 0xff;
             LED_PORT2 = 0xff;
-            LED_PORT3 = 0xff;
-        } else if (i < 16) {
+        } else {
             LED_PORT = 0xff;
             LED_PORT1 = value & 0xff;
-            if (31 - i < 16) {
+            if (23 - i < 16) {
                 LED_PORT1 |= (value >> 8) & 0xff;
             }
             LED_PORT2 = 0xff;
-            LED_PORT3 = 0xff;
         }
-        delay(20000);
+        delay(200);
     }
 }
 
@@ -119,14 +97,12 @@ void fade_in_out() {
                 LED_PORT = ~(0xff << i);
                 LED_PORT1 = ~(0xff << i);
                 LED_PORT2 = ~(0xff << i);
-                LED_PORT3 = ~(0xff << i);
             } else {  // 渐灭过程
                 LED_PORT = (0xff << (8 - i));
                 LED_PORT1 = (0xff << (8 - i));
                 LED_PORT2 = (0xff << (8 - i));
-                LED_PORT3 = (0xff << (8 - i));
             }
-            delay(20000);
+            delay(200);
         }
     }
 }
@@ -135,29 +111,21 @@ void fade_in_out() {
 void flash_spread() {
     unsigned char i, k;
     for (k = 0; k < 4; k++) {  // 闪烁扩散次数
-        for (i = 0; i < 32; i++) {
+        for (i = 0; i < 24; i++) {
             if (i < 8) {
                 LED_PORT = ~(0x01 << i);
                 LED_PORT1 = 0xff;
                 LED_PORT2 = 0xff;
-                LED_PORT3 = 0xff;
             } else if (i < 16) {
                 LED_PORT = 0xff;
                 LED_PORT1 = ~(0x01 << (i - 8));
                 LED_PORT2 = 0xff;
-                LED_PORT3 = 0xff;
-            } else if (i < 24) {
-                LED_PORT = 0xff;
-                LED_PORT1 = 0xff;
-                LED_PORT2 = ~(0x01 << (i - 16));
-                LED_PORT3 = 0xff;
             } else {
                 LED_PORT = 0xff;
                 LED_PORT1 = 0xff;
-                LED_PORT2 = 0xff;
-                LED_PORT3 = ~(0x01 << (i - 24));
+                LED_PORT2 = ~(0x01 << (i - 16));
             }
-            delay(10000);
+            delay(100);
         }
     }
 }
@@ -166,49 +134,37 @@ void flash_spread() {
 void running_light_blink() {
     unsigned char i, j;
     for (j = 0; j < 3; j++) {  // 循环闪烁次数
-        for (i = 0; i < 32; i++) {
+        for (i = 0; i < 24; i++) {
             if (i < 8) {
                 LED_PORT = ~(0x01 << i);
                 LED_PORT1 = 0xff;
                 LED_PORT2 = 0xff;
-                LED_PORT3 = 0xff;
             } else if (i < 16) {
                 LED_PORT = 0xff;
                 LED_PORT1 = ~(0x01 << (i - 8));
                 LED_PORT2 = 0xff;
-                LED_PORT3 = 0xff;
-            } else if (i < 24) {
-                LED_PORT = 0xff;
-                LED_PORT1 = 0xff;
-                LED_PORT2 = ~(0x01 << (i - 16));
-                LED_PORT3 = 0xff;
             } else {
                 LED_PORT = 0xff;
                 LED_PORT1 = 0xff;
-                LED_PORT2 = 0xff;
-                LED_PORT3 = ~(0x01 << (i - 24));
+                LED_PORT2 = ~(0x01 << (i - 16));
             }
-            delay(15000);
+            delay(150);
             // 闪烁部分
-            if ((i % 4) == 3) {  // 每 4 个灯闪烁一次
+            if ((i % 4) == 3) {  // 每4个灯闪烁一次
                 if (i < 8) {
                     LED_PORT = 0xff;
                 } else if (i < 16) {
                     LED_PORT1 = 0xff;
-                } else if (i < 24) {
-                    LED_PORT2 = 0xff;
                 } else {
-                    LED_PORT3 = 0xff;
+                    LED_PORT2 = 0xff;
                 }
-                delay(10000);
+                delay(100);
                 if (i < 8) {
                     LED_PORT = ~(0x01 << i);
                 } else if (i < 16) {
                     LED_PORT1 = ~(0x01 << (i - 8));
-                } else if (i < 24) {
-                    LED_PORT2 = ~(0x01 << (i - 16));
                 } else {
-                    LED_PORT3 = ~(0x01 << (i - 24));
+                    LED_PORT2 = ~(0x01 << (i - 16));
                 }
             }
         }
@@ -222,16 +178,14 @@ void heartbeat_flash() {
         LED_PORT = 0xff;
         LED_PORT1 = 0xff;
         LED_PORT2 = 0xff;
-        LED_PORT3 = 0xff;
-        delay(10000);
+        delay(100);
         LED_PORT = 0x00;
         LED_PORT1 = 0x00;
         LED_PORT2 = 0x00;
-        LED_PORT3 = 0x00;
         if (i < 5) {
-            delay(15000);
+            delay(150);
         } else {
-            delay(10000);
+            delay(100);
         }
     }
 }
@@ -240,29 +194,21 @@ void heartbeat_flash() {
 void random_blink_jump() {
     unsigned char i, pos;
     for (i = 0; i < 20; i++) {
-        pos = rand() % 32;
+        pos = rand() % 24;
         if (pos < 8) {
             LED_PORT = ~(0x01 << pos);
             LED_PORT1 = 0xff;
             LED_PORT2 = 0xff;
-            LED_PORT3 = 0xff;
         } else if (pos < 16) {
             LED_PORT = 0xff;
             LED_PORT1 = ~(0x01 << (pos - 8));
             LED_PORT2 = 0xff;
-            LED_PORT3 = 0xff;
-        } else if (pos < 24) {
-            LED_PORT = 0xff;
-            LED_PORT1 = 0xff;
-            LED_PORT2 = ~(0x01 << (pos - 16));
-            LED_PORT3 = 0xff;
         } else {
             LED_PORT = 0xff;
             LED_PORT1 = 0xff;
-            LED_PORT2 = 0xff;
-            LED_PORT3 = ~(0x01 << (pos - 24));
+            LED_PORT2 = ~(0x01 << (pos - 16));
         }
-        delay(10000);
+        delay(100);
     }
 }
 
@@ -270,31 +216,27 @@ void random_blink_jump() {
 void layered_flow_blink() {
     unsigned char i, j;
     for (j = 0; j < 3; j++) {  // 循环次数
-        for (i = 0; i < 4; i++) {  // 分为 4 层
-            // 第 1 层
+        for (i = 0; i < 4; i++) {  // 分为4层
+            // 第1层
             LED_PORT = ~(0x0f << (2 * i));
             LED_PORT1 = 0xff;
             LED_PORT2 = 0xff;
-            LED_PORT3 = 0xff;
-            delay(15000);
-            // 第 2 层
+            delay(150);
+            // 第2层
             LED_PORT = 0xff;
             LED_PORT1 = ~(0x0f << (2 * i));
             LED_PORT2 = 0xff;
-            LED_PORT3 = 0xff;
-            delay(15000);
-            // 第 3 层
+            delay(150);
+            // 第3层
             LED_PORT = 0xff;
             LED_PORT1 = 0xff;
             LED_PORT2 = ~(0x0f << (2 * i));
-            LED_PORT3 = 0xff;
-            delay(15000);
-            // 第 4 层
+            delay(150);
+            // 第4层
             LED_PORT = 0xff;
             LED_PORT1 = 0xff;
-            LED_PORT2 = 0xff;
-            LED_PORT3 = ~(0x0f << (2 * i));
-            delay(15000);
+            LED_PORT2 = ~(0x0f << (2 * i));
+            delay(150);
         }
     }
 }
@@ -306,8 +248,7 @@ void cross_flash() {
         LED_PORT = ~(0x55 << i);
         LED_PORT1 = ~(0x55 << i);
         LED_PORT2 = ~(0x55 << i);
-        LED_PORT3 = ~(0x55 << i);
-        delay(15000);
+        delay(150);
     }
 }
 
@@ -317,10 +258,17 @@ void rotate_light() {
     for (j = 0; j < 4; j++) {  // 旋转次数
         for (i = 0; i < 8; i++) {
             LED_PORT = ~(0x01 << i);
-            LED_PORT1 = ~(0x01 << ((i + 2) % 8));
-            LED_PORT2 = ~(0x01 << ((i + 4) % 8));
-            LED_PORT3 = ~(0x01 << ((i + 6) % 8));
-            delay(15000);
+            if (i + 2 < 8) {
+                LED_PORT1 = ~(0x01 << (i + 2));
+            } else {
+                LED_PORT1 = ~(0x01 << (i + 2 - 8));
+            }
+            if (i + 4 < 8) {
+                LED_PORT2 = ~(0x01 << (i + 4));
+            } else {
+                LED_PORT2 = ~(0x01 << (i + 4 - 8));
+            }
+            delay(150);
         }
     }
 }
@@ -330,18 +278,32 @@ void wave_flow() {
     unsigned char i, j;
     for (j = 0; j < 3; j++) {  // 波动次数
         for (i = 0; i < 4; i++) {
-            // 第 1 个波峰
+            // 第1个波峰
             LED_PORT = ~(0x80 >> i);
-            LED_PORT1 = ~(0x80 >> (i + 1));
-            LED_PORT2 = ~(0x80 >> (i + 2));
-            LED_PORT3 = ~(0x80 >> (i + 3));
-            delay(12000);
-            // 第 2 个波峰
+            if (i + 1 < 8) {
+                LED_PORT1 = ~(0x80 >> (i + 1));
+            } else {
+                LED_PORT1 = ~(0x80 >> (i + 1 - 8));
+            }
+            if (i + 2 < 8) {
+                LED_PORT2 = ~(0x80 >> (i + 2));
+            } else {
+                LED_PORT2 = ~(0x80 >> (i + 2 - 8));
+            }
+            delay(120);
+            // 第2个波峰
             LED_PORT = ~(0x01 << i);
-            LED_PORT1 = ~(0x01 << (i + 1));
-            LED_PORT2 = ~(0x01 << (i + 2));
-            LED_PORT3 = ~(0x01 << (i + 3));
-            delay(12000);
+            if (i + 1 < 8) {
+                LED_PORT1 = ~(0x01 << (i + 1));
+            } else {
+                LED_PORT1 = ~(0x01 << (i + 1 - 8));
+            }
+            if (i + 2 < 8) {
+                LED_PORT2 = ~(0x01 << (i + 2));
+            } else {
+                LED_PORT2 = ~(0x01 << (i + 2 - 8));
+            }
+            delay(120);
         }
     }
 }
@@ -350,40 +312,30 @@ void wave_flow() {
 void flash_chase() {
     unsigned char i, j;
     for (j = 0; j < 4; j++) {  // 重复次数
-        for (i = 0; i < 32; i++) {
+        for (i = 0; i < 24; i++) {
             if (i < 8) {
                 LED_PORT = ~(0x01 << i);
                 LED_PORT1 = 0xff;
                 LED_PORT2 = 0xff;
-                LED_PORT3 = 0xff;
             } else if (i < 16) {
                 LED_PORT = 0xff;
                 LED_PORT1 = ~(0x01 << (i - 8));
                 LED_PORT2 = 0xff;
-                LED_PORT3 = 0xff;
-            } else if (i < 24) {
-                LED_PORT = 0xff;
-                LED_PORT1 = 0xff;
-                LED_PORT2 = ~(0x01 << (i - 16));
-                LED_PORT3 = 0xff;
             } else {
                 LED_PORT = 0xff;
                 LED_PORT1 = 0xff;
-                LED_PORT2 = 0xff;
-                LED_PORT3 = ~(0x01 << (i - 24));
+                LED_PORT2 = ~(0x01 << (i - 16));
             }
-            delay(10000);
-            if ((i + 1) % 4 == 0) {  // 每 4 个灯为一组，每组最后一个灯闪烁后熄灭
+            delay(100);
+            if ((i + 1) % 4 == 0) {  // 每4个灯为一组，每组最后一个灯闪烁后熄灭
                 if (i < 8) {
                     LED_PORT = 0xff;
                 } else if (i < 16) {
                     LED_PORT1 = 0xff;
-                } else if (i < 24) {
-                    LED_PORT2 = 0xff;
                 } else {
-                    LED_PORT3 = 0xff;
+                    LED_PORT2 = 0xff;
                 }
-                delay(5000);
+                delay(50);
             }
         }
     }
@@ -393,29 +345,21 @@ void flash_chase() {
 void meteor_fall() {
     unsigned char i, j;
     for (j = 0; j < 5; j++) {  // 流星滑落次数
-        for (i = 0; i < 32; i++) {
+        for (i = 0; i < 24; i++) {
             if (i < 8) {
                 LED_PORT = ~(0x80 >> i);
                 LED_PORT1 = 0xff;
                 LED_PORT2 = 0xff;
-                LED_PORT3 = 0xff;
             } else if (i < 16) {
                 LED_PORT = 0xff;
                 LED_PORT1 = ~(0x80 >> (i - 8));
                 LED_PORT2 = 0xff;
-                LED_PORT3 = 0xff;
-            } else if (i < 24) {
-                LED_PORT = 0xff;
-                LED_PORT1 = 0xff;
-                LED_PORT2 = ~(0x80 >> (i - 16));
-                LED_PORT3 = 0xff;
             } else {
                 LED_PORT = 0xff;
                 LED_PORT1 = 0xff;
-                LED_PORT2 = 0xff;
-                LED_PORT3 = ~(0x80 >> (i - 24));
+                LED_PORT2 = ~(0x80 >> (i - 16));
             }
-            delay(8000);
+            delay(80);
         }
     }
 }
@@ -437,6 +381,5 @@ void main() {
         wave_flow();
         flash_chase();
         meteor_fall();
-        // 如果需要添加更多效果函数，可以在这里继续添加调用
     }
 }
