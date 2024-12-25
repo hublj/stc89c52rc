@@ -1,4 +1,4 @@
-#include<reg52.h>
+#include<STC89C5xRC.h>
 #include<intrins.h> //库函数
 #define uint unsigned int
 #define uchar unsigned char//宏定义
