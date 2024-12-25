@@ -1,4 +1,4 @@
-#include <REGX52.H>
+#include <STC89C5xRC.h>
 #include <Intrins.h>
  
 //LED灯引脚，沿逆时针定义
