@@ -1,0 +1,616 @@
+#include<reg52.h> 
+#define uchar unsigned char
+uchar flag=200;
+///
+uchar code Tab1[]={0xFE,0xFD,0xFB,0xF7,0xEF,0xDF,0xBF,0x7F,0xFF};//暗中左移 向下
+uchar code Tab2[]={0x7F,0xBF,0xDF,0xEF,0xF7,0xFB,0xFD,0xFE,0xFF};//暗中右移 向下
+uchar code Tab3[]={0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x00};//亮中左移 向下
+uchar code Tab4[]={0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01,0x00};//亮中右移 向下
+uchar code Tab11[]={0xFE,0xFC,0xF8,0xF0,0xE0,0xC0,0x80,0x00,0xff};//暗中左移 向下
+uchar code Tab22[]={0x7F,0x3F,0x1F,0x0F,0x07,0x03,0x01,0x00,0xff};
+ 
+uchar code Tab33[]={0x80,0xC0,0xE0,0xF0,0xF8,0xFC,0xFE,0xFF};
+uchar code Tab44[]={0x01,0x03,0x07,0x0F,0x1F,0x3F,0x7F,0xFF};
+uchar code Tab55[]={0x08,0xc0,0xe0,0xf0,0xf8,0xfc,0xfe,0xff,0xff};
+uchar code Tab5[]={0x00,0x80,0xC0,0xE0,0xF0,0xF8,0xFC,0xFE,0xff};
+uchar code Tab6[]={0x00,0x01,0x03,0x07,0x0F,0x1F,0x3F,0x7F,0xff};
+uchar code Tab7[]={0x7f,0xbf,0xdf,0xef,0xf7,0xfb,0xfd,0xfe};
+uchar code Tab8[]={0xfe,0xfd,0xfb,0xf7,0xef,0xdf,0xbf,0x7f};
+ 
+void shansuo();
+void xl();
+///
+void delay(void)   
+{
+   unsigned char m,n;
+	 for(m=0;m<flag;m++)
+	  for(n=0;n<250;n++)	   
+           ;
+ }
+///
+ void hy1(void)  //点亮状态逆时针旋转90度（一个一个点亮）
+  unsigned char i;
+  for(i=0;i<8;i++) 
+    {
+		P0=Tab11[i];P1=Tab22[i];
+ 	   P2=Tab11[i];P3=Tab22[i];
+ 		delay();
+	 }
+  for(i=0;i<8;i++) 
+    {
+		P0=Tab44[i];P1=Tab55[i];
+ 	   P2=Tab44[i];P3=Tab55[i];
+ 		delay();
+	 }
+}
+///
+ void hy2(void)  //暗中逆时针转360度（一个一个点亮）
+{
+  unsigned char i;
+ for(flag=250;flag>0;flag=flag-50)
+  {
+	P0=0xff;P1=0xff;P2=0xff;P3=0xff;
+	for(i=0;i<8;i++) 
+    {
+		P0=Tab11[i];
+		delay();
+	 }
+  for(i=0;i<8;i++) 
+    {
+ 	   P2=Tab11[i];
+		delay();
+	 }
+  for(i=0;i<8;i++) 
+    {
+		P3=Tab22[i];
+		delay();
+	 }
+  for(i=0;i<8;i++) 
+    {
+ 	   P1=Tab22[i];
+		delay();
+	 }
+	}
+flag=250;
+}
+ 
+ void hy3(void)  //点亮中逆时针转360度（一个一个灭）
+{
+  unsigned char i;
+		flag=50;
+		P0=0x00;P1=0x00;P2=0x00;P3=0x00;
+  for(i=0;i<8;i++) 
+    {
+		P0=Tab44[i];
+		delay();
+	 }
+  for(i=0;i<8;i++) 
+    {
+ 	   P2=Tab44[i];
+		delay();
+	 }
+  for(i=0;i<8;i++) 
+    {
+		P3=Tab33[i];
+		delay();
+	 }
+  for(i=0;i<8;i++) 
+    {
+ 	   P1=Tab33[i];
+		delay();
+	 }
+    flag=150;
+}
+///
+ void hy4(void)  //点亮状态逆顺时针旋转90度（一个一个点亮）
+{
+  unsigned char i;
+  for(i=0;i<8;i++) 
+    {
+		P1=Tab11[i];P0=Tab22[i];
+ 	   P3=Tab11[i];P2=Tab22[i];
+ 		delay();
+	 }
+  for(i=0;i<9;i++) 
+    {
+		P1=Tab6[i];P0=Tab5[i];
+ 	   P3=Tab6[i];P2=Tab5[i];
+ 		delay();
+	 }
+}
+/
+ void hy2_1(void)  //°
+{
+  unsigned char i;
+		flag=200;
+		P0=0xff;P1=0xff;P2=0xff;P3=0xff;
+  for(i=0;i<9;i++) 
+    {
+		P0=Tab11[i];
+		delay();
+	 }
+		flag=110;
+  for(i=0;i<9;i++) 
+    {
+ 	   P2=Tab11[i];
+		delay();
+	 }
+		flag=80;
+  for(i=0;i<9;i++) 
+    {
+		P3=Tab22[i];
+		delay();
+	 }
+		flag=80;
+  for(i=0;i<9;i++) 
+    {
+ 	   P1=Tab22[i];
+		delay();
+	 }
+}
+ 
+ void hy2_2(void)  //
+{
+  unsigned char i;
+		P0=0xff;P1=0xff;P2=0xff;P3=0xff;
+  for(i=0;i<8;i++) 
+    {
+		P0=Tab11[i];
+		delay();
+	 }
+  for(i=0;i<8;i++) 
+    {
+ 	   P2=Tab11[i];
+		delay();
+	 }
+		P0=0xff;P2=0xff;
+  for(i=0;i<8;i++) 
+    {
+		P3=Tab22[i];
+		delay();
+	 }
+  for(i=0;i<8;i++) 
+    {
+ 	   P1=Tab22[i];
+		delay();
+	 }
+		P1=0xff;P3=0xff;
+}
+///
+ void hy2_3(void)  //
+{
+  unsigned char i;
+		P0=0xff;P1=0xff;P2=0xff;P3=0xff;
+  for(i=0;i<8;i++) 
+    {
+		P0=Tab11[i];
+ 	   P1=Tab11[i];
+		delay();
+	 }
+  for(i=0;i<8;i++) 
+    {
+ 	   P2=Tab11[i];
+		P3=Tab11[i];
+		delay();
+	 }
+///
+    flag=100;
+  for(i=0;i<8;i++) 
+    {
+		P2=Tab33[i];
+ 	   P3=Tab33[i];
+		delay();
+	 }
+  for(i=0;i<8;i++) 
+    {
+ 	   P0=Tab33[i];
+		P1=Tab33[i];
+		delay();
+    flag=200;
+	 }
+}
+///
+ void hy2_4(void)  //°µÖÐÄæÊ±Õë×ª360¡££¨Ò»¸öÒ»¸öµãÁÁ£©
+{
+  unsigned char i;
+		P0=0xff;P1=0xff;P2=0xff;P3=0xff;
+  for(i=0;i<8;i++) 
+    {
+		P0=Tab11[i];
+		P3=Tab22[i];
+		delay();
+	 }
+  for(i=0;i<8;i++) 
+    {
+ 	   P2=Tab11[i];
+		P1=Tab22[i];
+		delay();
+	 }
+///
+    flag=100;
+for(i=0;i<8;i++) 
+    {
+		P0=Tab44[i];
+		P3=Tab5[i];
+		delay();
+	 }
+  for(i=0;i<8;i++) 
+    {
+ 	   P2=Tab44[i];
+		P1=Tab5[i];
+		delay();
+	 }
+    flag=200;
+}
+ 
+///
+ 
+ void hy5(void)  //ÏÈÏòÏÂÉìÕ¹£¬È»ºóÏòÉÏÉìÕ¹Öð½¥µãÁÁ
+{
+  unsigned char i;
+  for(i=0;i<8;i++) 
+    {
+		P0=Tab8[i];
+		P1=Tab8[i];
+		delay();
+	 }
+	P0=0xff;
+	P1=0xff;
+  for(i=0;i<8;i++) 
+    {
+		P2=Tab8[i];
+		P3=Tab8[i];
+		delay();
+	 }
+	P2=0xff;
+	P3=0xff;
+  for(i=0;i<8;i++) 
+    {
+		P2=Tab7[i];
+		P3=Tab7[i];
+		delay();
+	 }
+	P2=0xff;
+	P3=0xff;
+  for(i=0;i<8;i++) 
+    {
+		P0=Tab7[i];
+		P1=Tab7[i];
+		delay();
+	 }
+	P0=0xff;
+	P1=0xff;
+}
+/
+void jr(void)//¾ÛÂ£
+{
+  unsigned char i;
+  for(i=0;i<9;i++)  //8Î»¿ØÖÆÂë
+    {
+ 	   P0=Tab1[i];P1=Tab1[i];
+ 	   P2=Tab2[i];P3=Tab2[i]; 	   
+		delay();
+ 	 }  
+  for(i=0;i<9;i++) 
+    {
+ 	   P0=Tab2[i];P1=Tab2[i];
+  	   P2=Tab1[i];P3=Tab1[i];
+		delay();
+	 } 	   
+///
+  for(i=0;i<9;i++)  
+    {
+ 	   P0=Tab1[i];P1=Tab1[i];
+ 	   P2=Tab2[i];P3=Tab2[i]; 	   
+		delay();
+ 	 }
+  for(i=0;i<9;i++) 
+    {
+ 	   P0=Tab2[i];P1=Tab2[i];
+  	   P2=Tab1[i];P3=Tab1[i];
+ 		delay();
+	 }
+	xl(); //ÐÇÐÇÕ£ÑÛ
+	xl(); //ÐÇÐÇÕ£ÑÛ
+///
+  for(i=0;i<9;i++) 
+    {
+ 	   P0=Tab3[i]; P1=Tab3[i];
+ 	   P2=Tab4[i]; P3=Tab4[i];
+		delay();
+	 }
+  for(i=0;i<9;i++) 
+    {
+ 	   P0=Tab4[i];P1=Tab4[i];
+  	   P2=Tab3[i];P3=Tab4[i];
+		delay();
+	 }
+ 
+  for(i=0;i<9;i++) 
+    {
+ 	   P0=Tab1[i];P1=Tab1[i];
+ 	   P2=Tab2[i]; P3=Tab2[i]; 	   
+		delay();
+	 }
+ 	  
+  for(i=0;i<9;i++)  
+    {
+ 	   P0=Tab4[i];P1=Tab4[i];
+  	   P2=Tab3[i];P3=Tab3[i];
+		delay(); 	   
+	 }
+/
+  for(i=0;i<9;i++) 
+    {
+ 	   P0=Tab3[i]; P1=Tab3[i];
+  	   P2=Tab4[i];P3=Tab4[i];
+ 		delay();
+	 }
+  for(i=0;i<9;i++) 
+    {
+ 	   P0=Tab2[i];P1=Tab2[i];
+  	   P2=Tab1[i];P3=Tab1[i];
+ 		delay();
+	 }
+}
+ 
+void azzy(void)  //°µÖÐÏòÏÂ
+{
+  unsigned char i;
+	flag=200;
+  for(i=0;i<8;i++) 
+    {
+		P2=0xff;P3=0xff;
+ 	   P1=Tab1[i];P0=Tab1[i];
+		delay(); 	   
+	  }
+  for(i=0;i<9;i++) 
+    {
+		P1=0xff;P0=0xff;
+ 	   P2=Tab1[i];P3=Tab1[i];
+ 		delay();
+	  }
+}
+/
+void azyy(void)  //°µÖÐyouÒÆ
+{
+  unsigned char i;
+  for(i=0;i<8;i++) 
+    {
+		P0=0xff;P1=0xff;
+ 	   P2=Tab2[i];P3=Tab2[i];
+ 		delay();
+	  }
+  for(i=0;i<9;i++) 
+    {
+ 	   P0=Tab2[i];P1=Tab2[i];
+ 		delay();
+	  }
+}
+//
+ void led_flow1(void)  
+{
+  unsigned char i;
+  for(i=0;i<9;i++) 
+    {
+		P2=0;P3=0;
+ 	   P1=Tab3[i];P0=Tab3[i];
+		delay(); 	   
+	  }
+  for(i=0;i<9;i++)  
+    {
+ 	   P2=Tab3[i];P3=Tab3[i];
+ 		delay();
+	  }
+}
+///
+ void lzyy(void)  //ÁÁÖÐÓÒÒÆ
+{
+  unsigned char i;
+  for(i=0;i<9;i++)  
+    {
+		P0=0x00;P1=0x00;
+ 	   P2=Tab4[i];P3=Tab4[i];
+		delay(); 	   
+	  }
+  for(i=0;i<9;i++)  
+    {
+ 	   P0=Tab4[i];P1=Tab4[i];
+ 		delay();
+	  }
+}
+//
+void shansuo(void)//È«²¿µÆÉÁË¸
+	{
+uchar i;
+for(i=0;i<3;i++)
+{
+P0=0xff;	P1=0xff;	P2=0xff;	P3=0xff;
+delay();	delay();
+P0=0x00;	P1=0x00;	P2=0x00;	P3=0x00;
+delay();	delay();
+}
+	}
+ 
+void xl(void)//ÏàÁÚÁ©¸ö±ä»»
+{
+uchar i;
+for(i=0;i<3;i++)
+{
+P0=0xAA;P1=0xAA;P2=0xAA;P3=0xAA;
+delay();delay();
+P0=0x55;P1=0x55;P2=0x55;P3=0x55;
+delay();delay();
+}
+}
+//
+void sxb(void)//ÉÏÏÂ°ë
+{
+  unsigned char i;
+P0=0xff;P1=0xff;
+P2=0x00;P3=0x00;
+delay();delay();delay();delay();
+  for(i=0;i<8;i++) 
+    {
+		P0=Tab11[i];
+ 	   P1=Tab11[i];
+		delay();
+	 }
+  for(i=0;i<8;i++) 
+    {
+		P0=Tab11[i];
+ 	   P1=Tab11[i];
+		delay();
+	 }
+  for(i=0;i<8;i++) 
+    {
+		P0=Tab11[i];
+ 	   P1=Tab11[i];
+		delay();
+	 }
+for(i=0;i<3;i++)
+{ 
+P0=0x00;P1=0x00;
+delay();delay();
+P0=0xff;P1=0xff;
+delay();delay();
+}
+}
+//
+void jc(void)//
+{
+uchar i;
+  for(i=0;i<3;i++) 
+{
+P0=0x00;
+P3=0x00;
+P1=0xff;
+P2=0xff;
+delay();delay();delay();delay();
+P1=0x00;
+P2=0x00;
+P0=0xff;
+P3=0xff;
+delay();delay();delay();delay();
+}
+}
+/
+void azzy_1(void)  //°µÖÐÏòÏÂ
+{
+  unsigned char i,i1;
+ for(flag=80;flag>0;flag=flag-10)
+  {
+  for(i=0;i<8;i++) 
+    {
+		P2=0xff;P3=0xff;
+ 	   P1=Tab1[i];P0=Tab1[i];
+		delay(); 	   
+	  }
+  for(i=0;i<9;i++) 
+    {
+		P1=0xff;P0=0xff;
+ 	   P2=Tab1[i];P3=Tab1[i];
+ 		delay();
+	  }
+	}
+	flag=10;
+  for(i1=0;i1<30;i1++)
+  {
+  for(i=0;i<8;i++) 
+    {
+		P2=0xff;P3=0xff;
+ 	   P1=Tab1[i];P0=Tab1[i];
+		delay(); 	   
+	  }
+  for(i=0;i<9;i++) 
+    {
+		P1=0xff;P0=0xff;
+ 	   P2=Tab1[i];P3=Tab1[i];
+ 		delay();
+	  }
+	}
+		flag=200;
+  }
+/
+void js(void)//½áÊø
+{
+uchar i;
+hy2_3();
+for(i=0;i<3;i++) 
+{
+P0=0xff;P2=0xff;
+delay();delay();
+P0=0x00;P2=0x00;
+delay();delay();
+}
+///
+for(i=0;i<3;i++) 
+{
+P1=0xff;P3=0xff;
+delay();delay();
+P1=0x00;P3=0x00;
+delay();delay();
+}
+//
+for(i=0;i<3;i++) 
+{
+P1=0x00;P3=0x00;
+P0=0x00;P2=0x00;
+delay();delay();
+P1=0xff;P3=0xff;
+P0=0xff;P2=0xff;
+delay();delay();
+}
+}
+/
+ void main(void)
+ {
+	while (1)
+	{
+azzy_1();
+//
+	hy2(); //°µÖÐÄæÊ±Õë×ª360¡ã£¨Ò»¸öÒ»¸öµãÁÁ£©
+	hy3(); //µãÁÁÖÐÄæÊ±Õë×ª360¡ã£¨Ò»¸öÒ»¸öÃð£©
+	hy2_1();//°µÖÐÄæÊ±Õë×ª90¶È¡££¨Ò»¸öÒ»¸öµãÁÁ£©
+	hy2_2();//°µÖÐÄæÊ±Õë×ª180¶È¡££¨Ò»¸öÒ»¸öµãÁÁ£©
+	hy2_3();//°µÖÐÏòÏÂ180¡££¨Ò»¸öÒ»¸öµãÁÁ£©
+	hy3();
+   hy2_4();
+///
+	hy1(); //°µÖÐ×´Ì¬ÄæÊ±ÕëÐý×ª90¶È£¨Ò»¸öÒ»¸öÁÁ£©
+	jc();//½»²æËÄÒ¶²Ý
+	hy1();
+	hy4(); //µãÁÁ×´Ì¬Ë³Ê±ÕëÐý×ª90¶È£¨Ò»¸öÒ»¸öÃð?
+	jc();
+	hy4();
+//
+	hy5();//ÏÈÏòÏÂÉìÕ¹£¬È»ºóÏòÉÏÉìÕ¹Öð½¥µãÁÁ
+	jr();
+/
+	azzy();//°µÖÐÏòÏÂ±ßÉìÕ¹
+	azyy();//°µÖÐÏòÉÏÉìÕ¹
+ //
+	xl(); //ÏàÁÚ±ä»»£¨ÐÇÐÇÕ£ÑÛ£©
+	shansuo();//È«²¿µÆÉÁË¸(Ò»ÁÁÒ»Ãð)
+/
+	led_flow1();//ÁÁÖÐÏòÏÂ
+	lzyy();    //ÁÁÖÐÏòÉÏ
+	led_flow1();//ÁÁÖÐÏòÏÂ
+	azyy();	  //°µÖÐÏòÉÏ
+	shansuo();
+///
+	sxb();//ÉÏÏÂ°ë
+	azzy();//°µÖÐÏòÏÂ
+	lzyy();//ÁÁÖÐÏòÉÏ
+	azzy();//°µÖÐÏòÏÂ
+	lzyy();//ÁÁÖÐÏòÉÏ
+///
+	shansuo();//ÉÁË¸
+	azyy();//°µÖÐÏòÉÏ
+	lzyy();//ÁÁÖÐÏòÉÏ
+	azyy();//°µÖÐÏòÉÏ
+	lzyy();//ÁÁÖÐÏòÉÏ
+	shansuo();
+	js();//½áÊø
+	}
+}   
