@@ -4,7 +4,7 @@
  * Version: 1.0
  */
 
-#include <reg52.h>
+#include <STC89C5xRC.h>
 #include <intrins.h>
 
 
