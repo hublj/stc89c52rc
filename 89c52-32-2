@@ -1,0 +1,210 @@
+#include <reg52.h>
+#include <intrins.h>
+
+#define uint unsigned int
+#define uchar unsigned char
+
+// 延时函数
+void delay(uint xms)
+{
+    uint i, j;
+    for (i = xms; i > 0; i--)
+        for (j = 110; j > 0; j--);
+}
+
+// 模式 1：两侧向中间闪烁
+void mode1(uint t)
+{
+    uchar left = 0xfe, right = 0x7f;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 4; i++)
+        {
+            left = _crol_(left, 1);
+            right = _cror_(right, 1);
+            P0 = P1 = P2 = P3 = left | right;
+            delay(200);
+        }
+    }
+}
+
+// 模式 2：中间向两侧闪烁
+void mode2(uint t)
+{
+    uchar left = 0x7f, right = 0xfe;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 4; i++)
+        {
+            left = _cror_(left, 1);
+            right = _crol_(right, 1);
+            P0 = P1 = P2 = P3 = left | right;
+            delay(200);
+        }
+    }
+}
+
+// 模式 3：间隔双灯闪烁后整体移动
+void mode3(uint t)
+{
+    uchar a = 0xaa;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 4; i++)
+        {
+            P0 = P1 = P2 = P3 = a;
+            delay(200);
+            a = _crol_(a, 2);
+        }
+    }
+}
+
+// 模式 4：双灯依次点亮并移动
+void mode4(uint t)
+{
+    uchar a = 0xfc;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 7; i++)
+        {
+            P0 = P1 = P2 = P3 = a;
+            delay(200);
+            a = _crol_(a, 2);
+        }
+    }
+}
+
+// 模式 5：中心扩展闪烁
+void mode5(uint t)
+{
+    uchar center = 0x01;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 4; i++)
+        {
+            center <<= 1;
+            center |= (center >> 1);
+            P0 = P1 = P2 = P3 = ~center;
+            delay(200);
+        }
+    }
+}
+
+// 模式 6：四角闪烁向中心
+void mode6(uint t)
+{
+    uchar corner = 0x81;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 4; i++)
+        {
+            corner = _crol_(corner, 2);
+            corner = _cror_(corner, 2);
+            P0 = P1 = P2 = P3 = ~corner;
+            delay(200);
+        }
+    }
+}
+
+// 模式 7：中心向四角闪烁
+void mode7(uint t)
+{
+    uchar center = 0xff;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 4; i++)
+        {
+            center &= 0x33;
+            P0 = P1 = P2 = P3 = ~center;
+            delay(200);
+            center = 0xff;
+        }
+    }
+}
+
+// 模式 8：逐行点亮后全亮闪烁
+void mode8(uint t)
+{
+    while (t--)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            P0 = P1 = P2 = P3 = 0xff << i;
+            delay(200);
+        }
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 4; i++)
+        {
+            P0 = P1 = P2 = P3 = 0xff >> i;
+            delay(200);
+        }
+    }
+}
+
+// 模式 9：Z 字形闪烁
+void mode9(uint t)
+{
+    uchar z = 0x88;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 3; i++)
+        {
+            z = _crol_(z, 2);
+            z = _cror_(z, 1);
+            P0 = P1 = P2 = P3 = ~z;
+            delay(200);
+        }
+    }
+}
+
+// 模式 10：S 字形闪烁
+void mode10(uint t)
+{
+    uchar s = 0x42;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 4; i++)
+        {
+            s = _crol_(s, 1);
+            s = _cror_(s, 2);
+            P0 = P1 = P2 = P3 = ~s;
+            delay(200);
+        }
+    }
+}
+
+void main()
+{
+    while (1)
+    {
+        mode1(1);
+        mode2(1);
+        mode3(1);
+        mode4(1);
+        mode5(1);
+        mode6(1);
+        mode7(1);
+        mode8(1);
+        mode9(1);
+        mode10(1);
+    }
+}
