@@ -1,0 +1,196 @@
+#include <STC89C5xRC.h>
+#include <intrins.h>
+
+#define uint unsigned int
+#define uchar unsigned char
+
+// 延时函数
+void delay(uint xms) {
+    uint i, j;
+    for (i = xms; i > 0; i--)
+        for (j = 110; j > 0; j--);
+}
+
+// 模式1：全亮顺时针螺旋式跑圈
+void mode1(uint t) {
+    uchar pattern[16] = {0xff, 0xfe, 0xfc, 0xf8, 0xf0, 0xe0, 0xc0, 0x80,
+                         0x9f, 0xbf, 0xdf, 0xef, 0xf7, 0xfb, 0xfd, 0xfe};
+    uint i;
+    while (t--) {
+        for (i = 0; i < 16; i++) {
+            P0 = P1 = P2 = P3 = pattern[i];
+            delay(200);
+        }
+    }
+}
+
+// 模式2：全亮逆时针螺旋式跑圈
+void mode2(uint t) {
+    uchar pattern[16] = {0xff, 0xfe, 0xfd, 0xfb, 0xf7, 0xef, 0xdf, 0xbf,
+                         0x9f, 0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe};
+    uint i;
+    while (t--) {
+        for (i = 0; i < 16; i++) {
+            P0 = P1 = P2 = P3 = pattern[i];
+            delay(200);
+        }
+    }
+}
+
+// 模式3：全亮十字交叉顺时针跑圈
+void mode3(uint t) {
+    uchar pattern[16] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                         0xfe, 0xfc, 0xf8, 0xf0, 0xe0, 0xc0, 0x80, 0x00};
+    uint i;
+    while (t--) {
+        for (i = 0; i < 16; i++) {
+            P0 = (i < 8)? 0xff : (0xff & ~(1 << (i - 8)));
+            P1 = (i < 8)? 0xff : (0xff & ~(1 << (i - 8)));
+            P2 = (i < 8)? 0xff : (0xff & ~(1 << (i - 8)));
+            P3 = (i < 8)? 0xff : (0xff & ~(1 << (i - 8)));
+            delay(200);
+        }
+    }
+}
+
+// 模式4：全亮十字交叉逆时针跑圈
+void mode4(uint t) {
+    uchar pattern[16] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                         0x00, 0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe};
+    uint i;
+    while (t--) {
+        for (i = 0; i < 16; i++) {
+            P0 = (i < 8)? 0xff : (0xff & ~(1 << (15 - i)));
+            P1 = (i < 8)? 0xff : (0xff & ~(1 << (15 - i)));
+            P2 = (i < 8)? 0xff : (0xff & ~(1 << (15 - i)));
+            P3 = (i < 8)? 0xff : (0xff & ~(1 << (15 - i)));
+            delay(200);
+        }
+    }
+}
+
+// 模式5：全亮双层顺时针跑圈
+void mode5(uint t) {
+    uchar pattern[16] = {0xff, 0xfd, 0xfb, 0xf7, 0xef, 0xdf, 0xbf, 0x9f,
+                         0xfe, 0xfc, 0xf8, 0xf0, 0xe0, 0xc0, 0x80, 0x00};
+    uint i;
+    while (t--) {
+        for (i = 0; i < 16; i++) {
+            if (i < 8) {
+                P0 = 0xff & ~(1 << (i % 8));
+                P1 = 0xff;
+                P2 = 0xff;
+                P3 = 0xff;
+            } else {
+                P0 = 0xff;
+                P1 = 0xff;
+                P2 = 0xff;
+                P3 = 0xff & ~(1 << ((i - 8) % 8));
+            }
+            delay(200);
+        }
+    }
+}
+
+// 模式6：全亮双层逆时针跑圈
+void mode6(uint t) {
+    uchar pattern[16] = {0xff, 0x9f, 0xbf, 0xdf, 0xef, 0xf7, 0xfb, 0xfd,
+                         0x00, 0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe};
+    uint i;
+    while (t--) {
+        for (i = 0; i < 16; i++) {
+            if (i < 8) {
+                P0 = 0xff & ~(1 << (7 - (i % 8)));
+                P1 = 0xff;
+                P2 = 0xff;
+                P3 = 0xff;
+            } else {
+                P0 = 0xff;
+                P1 = 0xff;
+                P2 = 0xff;
+                P3 = 0xff & ~(1 << (7 - ((i - 8) % 8)));
+            }
+            delay(200);
+        }
+    }
+}
+
+// 模式7：全亮对角线顺时针跑圈
+void mode7(uint t) {
+    uchar pattern[16] = {0xff, 0xfe, 0xfd, 0xfb, 0xf7, 0xef, 0xdf, 0xbf,
+                         0x9f, 0x81, 0x43, 0x27, 0x1f, 0x0f, 0x07, 0x03};
+    uint i;
+    while (t--) {
+        for (i = 0; i < 16; i++) {
+            P0 = pattern[i];
+            P1 = pattern[i];
+            P2 = pattern[i];
+            P3 = pattern[i];
+            delay(200);
+        }
+    }
+}
+
+// 模式8：全亮对角线逆时针跑圈
+void mode8(uint t) {
+    uchar pattern[16] = {0xff, 0x03, 0x07, 0x0f, 0x1f, 0x27, 0x43, 0x81,
+                         0x9f, 0xbf, 0xdf, 0xef, 0xf7, 0xfb, 0xfd, 0xfe};
+    uint i;
+    while (t--) {
+        for (i = 0; i < 16; i++) {
+            P0 = pattern[i];
+            P1 = pattern[i];
+            P2 = pattern[i];
+            P3 = pattern[i];
+            delay(200);
+        }
+    }
+}
+
+// 模式9：全亮波浪式顺时针跑圈
+void mode9(uint t) {
+    uchar pattern[16] = {0xff, 0xfe, 0xfc, 0xf8, 0xf0, 0xe0, 0xc0, 0x80,
+                         0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe, 0xff};
+    uint i;
+    while (t--) {
+        for (i = 0; i < 16; i++) {
+            P0 = pattern[i];
+            P1 = pattern[i];
+            P2 = pattern[i];
+            P3 = pattern[i];
+            delay(200);
+        }
+    }
+}
+
+// 模式10：全亮波浪式逆时针跑圈
+void mode10(uint t) {
+    uchar pattern[16] = {0xff, 0xfe, 0xfc, 0xf8, 0xf0, 0xe0, 0xc0, 0x80,
+                         0xff, 0xfe, 0xfc, 0xf8, 0xf0, 0xe0, 0xc0, 0x80};
+    uint i;
+    while (t--) {
+        for (i = 0; i < 16; i++) {
+            P0 = pattern[15 - i];
+            P1 = pattern[15 - i];
+            P2 = pattern[15 - i];
+            P3 = pattern[15 - i];
+            delay(200);
+        }
+    }
+}
+
+
+void main() {
+    while (1) {
+        mode1(1);
+        mode2(1);
+        mode3(1);
+        mode4(1);
+        mode5(1);
+        mode6(1);
+        mode7(1);
+        mode8(1);
+        mode9(1);
+        mode10(1);
+    }
+}
