@@ -1,0 +1,178 @@
+#include <STC89C5xRC.h>
+#include <intrins.h>
+#include <stdlib.h>
+
+#define uint unsigned int
+#define uchar unsigned char
+
+// 延时函数
+void delay(uint xms) {
+    uint i, j;
+    for (i = xms; i > 0; i--)
+        for (j = 110; j > 0; j--);
+}
+
+// 模式1：三行同时左移跑马灯
+void mode1(uint t) {
+    uchar a = 0x7e;
+    uint i;
+    while (t--) {
+        for (i = 0; i < 8; i++) {
+            P0 = a;
+            P1 = a;
+            P2 = a;
+            P3 = 0x00;
+            delay(200);
+            a = _crol_(a, 1);
+        }
+    }
+}
+
+// 模式2：三行同时右移跑马灯
+void mode2(uint t) {
+    uchar a = 0x7e;
+    uint i;
+    while (t--) {
+        for (i = 0; i < 8; i++) {
+            P0 = a;
+            P1 = a;
+            P2 = a;
+            P3 = 0x00;
+            delay(200);
+            a = _cror_(a, 1);
+        }
+    }
+}
+
+// 模式3：间隔两行交替闪烁并移动
+void mode3(uint t) {
+    uchar a = 0xaa;
+    uint i;
+    while (t--) {
+        for (i = 0; i < 4; i++) {
+            P0 = a;
+            P1 = 0x00;
+            P2 = a;
+            P3 = 0x00;
+            delay(200);
+            P0 = 0x00;
+            P1 = a;
+            P2 = 0x00;
+            P3 = a;
+            delay(200);
+            a = _crol_(a, 2);
+        }
+    }
+}
+
+// 模式4：四行间隔亮灯顺时针旋转
+void mode4(uint t) {
+    uchar a = 0x88;
+    uint i;
+    while (t--) {
+        for (i = 0; i < 8; i++) {
+            P0 = a;
+            P1 = _crol_(a, 2);
+            P2 = _crol_(a, 4);
+            P3 = _crol_(a, 6);
+            delay(200);
+            a = _crol_(a, 1);
+        }
+    }
+}
+
+// 模式5：四行间隔亮灯逆时针旋转
+void mode5(uint t) {
+    uchar a = 0x88;
+    uint i;
+    while (t--) {
+        for (i = 0; i < 8; i++) {
+            P0 = a;
+            P1 = _cror_(a, 2);
+            P2 = _cror_(a, 4);
+            P3 = _cror_(a, 6);
+            delay(200);
+            a = _cror_(a, 1);
+        }
+    }
+}
+
+// 模式6：四行中心对称亮灯移动
+void mode6(uint t) {
+    uchar a = 0x0f;
+    uint i;
+    while (t--) {
+        for (i = 0; i < 4; i++) {
+            P0 = a | _cror_(a, 4);
+            P1 = _crol_(a, 2) | _cror_(a, 2);
+            P2 = _crol_(a, 2) | _cror_(a, 2);
+            P3 = a | _cror_(a, 4);
+            delay(200);
+            a = _crol_(a, 1);
+        }
+    }
+}
+
+// 模式7：四行错位亮灯并移动
+void mode7(uint t) {
+    uchar a = 0x01;
+    uint i;
+    while (t--) {
+        for (i = 0; i < 8; i++) {
+            P0 = a;
+            P1 = _crol_(a, 1);
+            P2 = _crol_(a, 2);
+            P3 = _crol_(a, 3);
+            delay(200);
+            a = _crol_(a, 1);
+        }
+    }
+}
+
+// 模式8：四行逐行递增亮灯
+void mode8(uint t) {
+    uint i;
+    while (t--) {
+        for (i = 0; i < 8; i++) {
+            P0 = 0xff << i;
+            P1 = 0xff << (i + 1);
+            P2 = 0xff << (i + 2);
+            P3 = 0xff << (i + 3);
+            delay(200);
+        }
+    }
+}
+
+// 模式9：四行逐行递减亮灯
+void mode9(uint t) {
+    uint i;
+    while (t--) {
+        for (i = 0; i < 8; i++) {
+            P0 = 0xff >> i;
+            P1 = 0xff >> (i + 1);
+            P2 = 0xff >> (i + 2);
+            P3 = 0xff >> (i + 3);
+            delay(200);
+        }
+    }
+}
+
+
+
+
+
+
+void main() {
+    while (1) {
+        mode1(1);
+        mode2(1);
+        mode3(1);
+        mode4(1);
+        mode5(1);
+        mode6(1);
+        mode7(1);
+        mode8(1);
+        mode9(1);
+       
+    }
+}
