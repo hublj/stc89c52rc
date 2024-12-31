@@ -1,0 +1,212 @@
+#include<STC89C5xRC.h>
+#include<intrins.h>
+
+#define uint unsigned int
+#define uchar unsigned char
+
+// 延时函数
+void delay(uint xms)
+{
+    uint i, j;
+    for (i = xms; i > 0; i--)
+        for (j = 110; j > 0; j--);
+}
+
+// 模式1：全亮后逐位左移闪烁
+void mode1(uint t)
+{
+    uchar a = 0xff;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 8; i++)
+        {
+            a = _crol_(a, 1);
+            P0 = P1 = P2 = P3 = a;
+            delay(200);
+        }
+    }
+}
+
+// 模式2：全亮后逐位右移闪烁
+void mode2(uint t)
+{
+    uchar a = 0xff;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 8; i++)
+        {
+            a = _cror_(a, 1);
+            P0 = P1 = P2 = P3 = a;
+            delay(200);
+        }
+    }
+}
+
+// 模式3：两灯同时左移闪烁
+void mode3(uint t)
+{
+    uchar a = 0xfc;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 7; i++)
+        {
+            a = _crol_(a, 2);
+            P0 = P1 = P2 = P3 = a;
+            delay(200);
+        }
+    }
+}
+
+// 模式4：两灯同时右移闪烁
+void mode4(uint t)
+{
+    uchar a = 0xfc;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 7; i++)
+        {
+            a = _cror_(a, 2);
+            P0 = P1 = P2 = P3 = a;
+            delay(200);
+        }
+    }
+}
+
+// 模式5：间隔亮灯左移闪烁
+void mode5(uint t)
+{
+    uchar a = 0xaa;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 4; i++)
+        {
+            a = _crol_(a, 4);
+            P0 = P1 = P2 = P3 = a;
+            delay(200);
+        }
+    }
+}
+
+// 模式6：间隔亮灯右移闪烁
+void mode6(uint t)
+{
+    uchar a = 0xaa;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 4; i++)
+        {
+            a = _cror_(a, 4);
+            P0 = P1 = P2 = P3 = a;
+            delay(200);
+        }
+    }
+}
+
+// 模式7：交叉亮灯左移闪烁
+void mode7(uint t)
+{
+    uchar a = 0xf0;
+    uchar b = 0x0f;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 4; i++)
+        {
+            a = _crol_(a, 4);
+            b = _crol_(b, 4);
+            P0 = P2 = a;
+            P1 = P3 = b;
+            delay(200);
+        }
+    }
+}
+
+// 模式8：交叉亮灯右移闪烁
+void mode8(uint t)
+{
+    uchar a = 0xf0;
+    uchar b = 0x0f;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 4; i++)
+        {
+            a = _cror_(a, 4);
+            b = _cror_(b, 4);
+            P0 = P2 = a;
+            P1 = P3 = b;
+            delay(200);
+        }
+    }
+}
+
+// 模式9：全亮后逐位间隔闪烁
+void mode9(uint t)
+{
+    uchar a = 0xff;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 8; i++)
+        {
+            if (i % 2 == 0)
+                a &= 0xfd;
+            else
+                a |= 0x02;
+            P0 = P1 = P2 = P3 = a;
+            delay(200);
+        }
+    }
+}
+
+// 模式10：全亮后逐位反向间隔闪烁
+void mode10(uint t)
+{
+    uchar a = 0xff;
+    while (t--)
+    {
+        P0 = P1 = P2 = P3 = 0xff;
+        delay(300);
+        for (int i = 0; i < 8; i++)
+        {
+            if (i % 2 == 0)
+                a &= 0xfb;
+            else
+                a |= 0x04;
+            P0 = P1 = P2 = P3 = a;
+            delay(200);
+        }
+    }
+}
+
+void main()
+{
+    while (1)
+    {
+        mode1(1);
+        mode2(1);
+        mode3(1);
+        mode4(1);
+        mode5(1);
+        mode6(1);
+        mode7(1);
+        mode8(1);
+        mode9(1);
+        mode10(1);
+    }
+}
