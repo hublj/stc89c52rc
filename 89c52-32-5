@@ -1,0 +1,195 @@
+#include <STC89C5xRC.h>
+#include <intrins.h>
+#include <stdlib.h>
+
+#define uint unsigned int
+#define uchar unsigned char
+
+// 延时函数
+void delay(uint xms) {
+    uint i, j;
+    for (i = xms; i > 0; i--)
+        for (j = 110; j > 0; j--);
+}
+
+// 模式1：四行逐列扫描亮灯
+void mode1(uint t) {
+    uint i;
+    while (t--) {
+        for (i = 0; i < 8; i++) {
+            P0 = 1 << i;
+            P1 = 1 << i;
+            P2 = 1 << i;
+            P3 = 1 << i;
+            delay(200);
+        }
+    }
+}
+
+// 模式2：四行隔列扫描亮灯
+void mode2(uint t) {
+    uint i;
+    while (t--) {
+        for (i = 0; i < 4; i++) {
+            P0 = (1 << (2 * i));
+            P1 = (1 << (2 * i));
+            P2 = (1 << (2 * i));
+            P3 = (1 << (2 * i));
+            delay(200);
+        }
+    }
+}
+
+// 模式3：四行斜向扫描亮灯（从左上到右下）
+void mode3(uint t) {
+    uint i;
+    uchar pattern[8] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
+    while (t--) {
+        for (i = 0; i < 8; i++) {
+            P0 = pattern[i];
+            P1 = _crol_(pattern[i], 1);
+            P2 = _crol_(pattern[i], 2);
+            P3 = _crol_(pattern[i], 3);
+            delay(200);
+        }
+    }
+}
+
+// 模式4：四行斜向扫描亮灯（从右上到左下）
+void mode4(uint t) {
+    uint i;
+    uchar pattern[8] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
+    while (t--) {
+        for (i = 0; i < 8; i++) {
+            P0 = pattern[i];
+            P1 = _cror_(pattern[i], 1);
+            P2 = _cror_(pattern[i], 2);
+            P3 = _cror_(pattern[i], 3);
+            delay(200);
+        }
+    }
+}
+
+// 模式5：四行波浪式亮灯
+void mode5(uint t) {
+    uint i;
+    uchar wave[8] = {0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF};
+    while (t--) {
+        for (i = 0; i < 8; i++) {
+            P0 = wave[i];
+            P1 = wave[(i + 2) % 8];
+            P2 = wave[(i + 4) % 8];
+            P3 = wave[(i + 6) % 8];
+            delay(200);
+        }
+    }
+}
+
+// 模式6：四行旋转方阵亮灯
+void mode6(uint t) {
+    uint i;
+    uchar pattern[8] = {0x81, 0x42, 0x24, 0x18, 0x08, 0x10, 0x20, 0x40};
+    while (t--) {
+        for (i = 0; i < 8; i++) {
+            P0 = pattern[i];
+            P1 = _crol_(pattern[i], 4);
+            P2 = _crol_(pattern[i], 2);
+            P3 = _cror_(pattern[i], 2);
+            delay(200);
+        }
+    }
+}
+
+// 模式7：四行随机块状亮灯
+void mode7(uint t) {
+    uint i, j;
+    while (t--) {
+        for (i = 0; i < 10; i++) {
+            uchar p0val = 0, p1val = 0, p2val = 0, p3val = 0;
+            for (j = 0; j < 3; j++) {
+                int block = rand() % 8;
+                p0val |= (0x07 << block);
+                p1val |= (0x07 << block);
+                p2val |= (0x07 << block);
+                p3val |= (0x07 << block);
+            }
+            P0 = p0val;
+            P1 = p1val;
+            P2 = p2val;
+            P3 = p3val;
+            delay(200);
+        }
+    }
+}
+
+// 模式8：四行交替十字亮灯
+void mode8(uint t) {
+    uint i;
+    while (t--) {
+        for (i = 0; i < 2; i++) {
+            P0 = 0x55;
+            P1 = 0xAA;
+            P2 = 0x55;
+            P3 = 0xAA;
+            delay(200);
+            P0 = 0xAA;
+            P1 = 0x55;
+            P2 = 0xAA;
+            P3 = 0x55;
+            delay(200);
+        }
+    }
+}
+
+// 模式9：四行对称递增亮灯
+void mode9(uint t) {
+    uint i;
+    while (t--) {
+        for (i = 0; i < 4; i++) {
+            uchar value = 0xFF << i;
+            P0 = value | _cror_(value, 4);
+            P1 = value | _cror_(value, 4);
+            P2 = value | _cror_(value, 4);
+            P3 = value | _cror_(value, 4);
+            delay(200);
+        }
+    }
+}
+
+// 模式10：四行闪烁渐变亮灯
+void mode10(uint t) {
+    uint i, j;
+    while (t--) {
+        for (i = 0; i < 8; i++) {
+            uchar brightness = 0x01 << i;
+            for (j = 0; j < 5; j++) {
+                P0 = brightness;
+                P1 = brightness;
+                P2 = brightness;
+                P3 = brightness;
+                delay(100);
+                P0 = 0x00;
+                P1 = 0x00;
+                P2 = 0x00;
+                P3 = 0x00;
+                delay(100);
+            }
+        }
+    }
+}
+
+
+void main() {
+    while (1) {
+        mode1(1);
+        mode2(1);
+        mode3(1);
+        mode4(1);
+        mode5(1);
+        mode6(1);
+        mode7(1);
+        mode8(1);
+        mode9(1);
+        mode10(1);
+    }
+}
