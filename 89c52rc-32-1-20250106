@@ -29,6 +29,7 @@ void delay(void)
  }
 ///
  void hy1(void)  //点亮状态逆时针旋转90度（一个一个点亮）
+ {
   unsigned char i;
   for(i=0;i<8;i++) 
     {
@@ -118,7 +119,7 @@ flag=250;
  		delay();
 	 }
 }
-/
+//
  void hy2_1(void)  //°
 {
   unsigned char i;
@@ -210,7 +211,7 @@ flag=250;
 	 }
 }
 ///
- void hy2_4(void)  //°µÖÐÄæÊ±Õë×ª360¡££¨Ò»¸öÒ»¸öµãÁÁ£©
+ void hy2_4(void)  //°μ?D??ê±??×a360?￡￡¨ò???ò???μ?áá￡?
 {
   unsigned char i;
 		P0=0xff;P1=0xff;P2=0xff;P3=0xff;
@@ -245,7 +246,7 @@ for(i=0;i<8;i++)
  
 ///
  
- void hy5(void)  //ÏÈÏòÏÂÉìÕ¹£¬È»ºóÏòÉÏÉìÕ¹Öð½¥µãÁÁ
+ void hy5(void)  //?è?ò??éì?1￡?è?oó?òé?éì?1?e?￥μ?áá
 {
   unsigned char i;
   for(i=0;i<8;i++) 
@@ -281,11 +282,11 @@ for(i=0;i<8;i++)
 	P0=0xff;
 	P1=0xff;
 }
-/
-void jr(void)//¾ÛÂ£
+//
+void jr(void)//???￡
 {
   unsigned char i;
-  for(i=0;i<9;i++)  //8Î»¿ØÖÆÂë
+  for(i=0;i<9;i++)  //8????????
     {
  	   P0=Tab1[i];P1=Tab1[i];
  	   P2=Tab2[i];P3=Tab2[i]; 	   
@@ -310,8 +311,8 @@ void jr(void)//¾ÛÂ£
   	   P2=Tab1[i];P3=Tab1[i];
  		delay();
 	 }
-	xl(); //ÐÇÐÇÕ£ÑÛ
-	xl(); //ÐÇÐÇÕ£ÑÛ
+	xl(); //D?D??￡??
+	xl(); //D?D??￡??
 ///
   for(i=0;i<9;i++) 
     {
@@ -339,7 +340,7 @@ void jr(void)//¾ÛÂ£
   	   P2=Tab3[i];P3=Tab3[i];
 		delay(); 	   
 	 }
-/
+//
   for(i=0;i<9;i++) 
     {
  	   P0=Tab3[i]; P1=Tab3[i];
@@ -354,7 +355,7 @@ void jr(void)//¾ÛÂ£
 	 }
 }
  
-void azzy(void)  //°µÖÐÏòÏÂ
+void azzy(void)  //°μ?D?ò??
 {
   unsigned char i;
 	flag=200;
@@ -371,8 +372,8 @@ void azzy(void)  //°µÖÐÏòÏÂ
  		delay();
 	  }
 }
-/
-void azyy(void)  //°µÖÐyouÒÆ
+//
+void azyy(void)  //°μ?Dyouò?
 {
   unsigned char i;
   for(i=0;i<8;i++) 
@@ -404,7 +405,7 @@ void azyy(void)  //°µÖÐyouÒÆ
 	  }
 }
 ///
- void lzyy(void)  //ÁÁÖÐÓÒÒÆ
+ void lzyy(void)  //áá?Dóòò?
 {
   unsigned char i;
   for(i=0;i<9;i++)  
@@ -420,7 +421,7 @@ void azyy(void)  //°µÖÐyouÒÆ
 	  }
 }
 //
-void shansuo(void)//È«²¿µÆÉÁË¸
+void shansuo(void)//è?2?μ?éá??
 	{
 uchar i;
 for(i=0;i<3;i++)
@@ -432,7 +433,7 @@ delay();	delay();
 }
 	}
  
-void xl(void)//ÏàÁÚÁ©¸ö±ä»»
+void xl(void)//?àáúá???±???
 {
 uchar i;
 for(i=0;i<3;i++)
@@ -444,7 +445,7 @@ delay();delay();
 }
 }
 //
-void sxb(void)//ÉÏÏÂ°ë
+void sxb(void)//é???°?
 {
   unsigned char i;
 P0=0xff;P1=0xff;
@@ -494,8 +495,8 @@ P3=0xff;
 delay();delay();delay();delay();
 }
 }
-/
-void azzy_1(void)  //°µÖÐÏòÏÂ
+//
+void azzy_1(void)  //°μ?D?ò??
 {
   unsigned char i,i1;
  for(flag=80;flag>0;flag=flag-10)
@@ -531,8 +532,8 @@ void azzy_1(void)  //°µÖÐÏòÏÂ
 	}
 		flag=200;
   }
-/
-void js(void)//½áÊø
+//
+void js(void)//?áê?
 {
 uchar i;
 hy2_3();
@@ -562,55 +563,55 @@ P0=0xff;P2=0xff;
 delay();delay();
 }
 }
-/
+//
  void main(void)
  {
 	while (1)
 	{
 azzy_1();
 //
-	hy2(); //°µÖÐÄæÊ±Õë×ª360¡ã£¨Ò»¸öÒ»¸öµãÁÁ£©
-	hy3(); //µãÁÁÖÐÄæÊ±Õë×ª360¡ã£¨Ò»¸öÒ»¸öÃð£©
-	hy2_1();//°µÖÐÄæÊ±Õë×ª90¶È¡££¨Ò»¸öÒ»¸öµãÁÁ£©
-	hy2_2();//°µÖÐÄæÊ±Õë×ª180¶È¡££¨Ò»¸öÒ»¸öµãÁÁ£©
-	hy2_3();//°µÖÐÏòÏÂ180¡££¨Ò»¸öÒ»¸öµãÁÁ£©
+	hy2(); //°μ?D??ê±??×a360??￡¨ò???ò???μ?áá￡?
+	hy3(); //μ?áá?D??ê±??×a360??￡¨ò???ò????e￡?
+	hy2_1();//°μ?D??ê±??×a90?è?￡￡¨ò???ò???μ?áá￡?
+	hy2_2();//°μ?D??ê±??×a180?è?￡￡¨ò???ò???μ?áá￡?
+	hy2_3();//°μ?D?ò??180?￡￡¨ò???ò???μ?áá￡?
 	hy3();
    hy2_4();
 ///
-	hy1(); //°µÖÐ×´Ì¬ÄæÊ±ÕëÐý×ª90¶È£¨Ò»¸öÒ»¸öÁÁ£©
-	jc();//½»²æËÄÒ¶²Ý
+	hy1(); //°μ?D×′ì???ê±??Dy×a90?è￡¨ò???ò???áá￡?
+	jc();//??2???ò?2Y
 	hy1();
-	hy4(); //µãÁÁ×´Ì¬Ë³Ê±ÕëÐý×ª90¶È£¨Ò»¸öÒ»¸öÃð?
+	hy4(); //μ?áá×′ì??3ê±??Dy×a90?è￡¨ò???ò????e?
 	jc();
 	hy4();
 //
-	hy5();//ÏÈÏòÏÂÉìÕ¹£¬È»ºóÏòÉÏÉìÕ¹Öð½¥µãÁÁ
+	hy5();//?è?ò??éì?1￡?è?oó?òé?éì?1?e?￥μ?áá
 	jr();
-/
-	azzy();//°µÖÐÏòÏÂ±ßÉìÕ¹
-	azyy();//°µÖÐÏòÉÏÉìÕ¹
+//
+	azzy();//°μ?D?ò??±?éì?1
+	azyy();//°μ?D?òé?éì?1
  //
-	xl(); //ÏàÁÚ±ä»»£¨ÐÇÐÇÕ£ÑÛ£©
-	shansuo();//È«²¿µÆÉÁË¸(Ò»ÁÁÒ»Ãð)
-/
-	led_flow1();//ÁÁÖÐÏòÏÂ
-	lzyy();    //ÁÁÖÐÏòÉÏ
-	led_flow1();//ÁÁÖÐÏòÏÂ
-	azyy();	  //°µÖÐÏòÉÏ
+	xl(); //?àáú±???￡¨D?D??￡??￡?
+	shansuo();//è?2?μ?éá??(ò?ááò??e)
+//
+	led_flow1();//áá?D?ò??
+	lzyy();    //áá?D?òé?
+	led_flow1();//áá?D?ò??
+	azyy();	  //°μ?D?òé?
 	shansuo();
 ///
-	sxb();//ÉÏÏÂ°ë
-	azzy();//°µÖÐÏòÏÂ
-	lzyy();//ÁÁÖÐÏòÉÏ
-	azzy();//°µÖÐÏòÏÂ
-	lzyy();//ÁÁÖÐÏòÉÏ
+	sxb();//é???°?
+	azzy();//°μ?D?ò??
+	lzyy();//áá?D?òé?
+	azzy();//°μ?D?ò??
+	lzyy();//áá?D?òé?
 ///
-	shansuo();//ÉÁË¸
-	azyy();//°µÖÐÏòÉÏ
-	lzyy();//ÁÁÖÐÏòÉÏ
-	azyy();//°µÖÐÏòÉÏ
-	lzyy();//ÁÁÖÐÏòÉÏ
+	shansuo();//éá??
+	azyy();//°μ?D?òé?
+	lzyy();//áá?D?òé?
+	azyy();//°μ?D?òé?
+	lzyy();//áá?D?òé?
 	shansuo();
-	js();//½áÊø
+	js();//?áê?
 	}
 }   
