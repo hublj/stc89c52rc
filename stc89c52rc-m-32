@@ -1,0 +1,736 @@
+#include <STC89C5xRC.h> 
+#define uchar unsigned char
+
+uchar flag = 200;
+uchar code Tab1[] = {0xFE, 0xFD, 0xFB, 0xF7, 0xEF, 0xDF, 0xBF, 0x7F, 0xFF};//暗中左移 向下
+uchar code Tab2[] = {0x7F, 0xBF, 0xDF, 0xEF, 0xF7, 0xFB, 0xFD, 0xFE, 0xFF};//暗中右移 向下
+uchar code Tab3[] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x00};//亮中左移 向下
+uchar code Tab4[] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01, 0x00};//亮中右移 向下
+uchar code Tab11[] = {0xFE, 0xFC, 0xF8, 0xF0, 0xE0, 0xC0, 0x80, 0x00, 0xff};//暗中左移 向下
+uchar code Tab22[] = {0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01, 0x00, 0xff};
+
+uchar code Tab33[] = {0x80, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC, 0xFE, 0xFF};
+uchar code Tab44[] = {0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF};
+uchar code Tab55[] = {0x08, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe, 0xff, 0xff};
+uchar code Tab5[] = {0x00, 0x80, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC, 0xFE, 0xff};
+uchar code Tab6[] = {0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xff};
+uchar code Tab7[] = {0x7f, 0xbf, 0xdf, 0xef, 0xf7, 0xfb, 0xfd, 0xfe};
+uchar code Tab8[] = {0xfe, 0xfd, 0xfb, 0xf7, 0xef, 0xdf, 0xbf, 0x7f};
+
+void shansuo();
+void xl();
+void delay(unsigned int time);
+void Timer0_Init(void);
+
+// 定时器0中断服务函数
+volatile unsigned int timer0_count = 0;
+void Timer0_ISR(void) interrupt 1
+{
+    TH0 = (65536 - 50000) >> 8; // 重装高8位初值，50000对应约50ms延时
+    TL0 = (65536 - 50000) & 0xFF; // 重装低8位初值
+    timer0_count++;
+}
+
+// 新的延时函数
+void delay(unsigned int time)
+{
+    timer0_count = 0;
+    while (timer0_count < time);
+}
+
+void hy1(void)  //点亮状态逆时针旋转90度（一个一个点亮）
+{
+    unsigned char i;
+    for (i = 0; i < 8; i++) 
+    {
+        P0 = Tab11[i];
+        P1 = Tab22[i];
+        P2 = Tab11[i];
+        P3 = Tab22[i];
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        P0 = Tab44[i];
+        P1 = Tab55[i];
+        P2 = Tab44[i];
+        P3 = Tab55[i];
+        delay(10);
+    }
+}
+
+void hy2(void)  //暗中逆时针转360度（一个一个点亮）
+{
+    unsigned char i;
+    for (flag = 250; flag > 0; flag = flag - 50)
+    {
+        P0 = 0xff;
+        P1 = 0xff;
+        P2 = 0xff;
+        P3 = 0xff;
+        for (i = 0; i < 8; i++) 
+        {
+            P0 = Tab11[i];
+            delay(10);
+        }
+        for (i = 0; i < 8; i++) 
+        {
+            P2 = Tab11[i];
+            delay(10);
+        }
+        for (i = 0; i < 8; i++) 
+        {
+            P3 = Tab22[i];
+            delay(10);
+        }
+        for (i = 0; i < 8; i++) 
+        {
+            P1 = Tab22[i];
+            delay(10);
+        }
+    }
+    flag = 250;
+}
+
+void hy3(void)  //点亮中逆时针转360度（一个一个灭）
+{
+    unsigned char i;
+    flag = 50;
+    P0 = 0x00;
+    P1 = 0x00;
+    P2 = 0x00;
+    P3 = 0x00;
+    for (i = 0; i < 8; i++) 
+    {
+        P0 = Tab44[i];
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        P2 = Tab44[i];
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        P3 = Tab33[i];
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        P1 = Tab33[i];
+        delay(10);
+    }
+    flag = 150;
+}
+
+void hy4(void)  //点亮状态逆顺时针旋转90度（一个一个点亮）
+{
+    unsigned char i;
+    for (i = 0; i < 8; i++) 
+    {
+        P1 = Tab11[i];
+        P0 = Tab22[i];
+        P2 = Tab11[i];
+        P3 = Tab22[i];
+        delay(10);
+    }
+    for (i = 0; i < 9; i++) 
+    {
+        P1 = Tab6[i];
+        P0 = Tab5[i];
+        P2 = Tab6[i];
+        P3 = Tab5[i];
+        delay(10);
+    }
+}
+
+void hy2_1(void)  //°
+{
+    unsigned char i;
+    flag = 200;
+    P0 = 0xff;
+    P1 = 0xff;
+    P2 = 0xff;
+    P3 = 0xff;
+    for (i = 0; i < 9; i++) 
+    {
+        P0 = Tab11[i];
+        delay(10);
+    }
+    flag = 110;
+    for (i = 0; i < 9; i++) 
+    {
+        P2 = Tab11[i];
+        delay(10);
+    }
+    flag = 80;
+    for (i = 0; i < 9; i++) 
+    {
+        P3 = Tab22[i];
+        delay(10);
+    }
+    flag = 80;
+    for (i = 0; i < 9; i++) 
+    {
+        P1 = Tab22[i];
+        delay(10);
+    }
+}
+
+void hy2_2(void)  //
+{
+    unsigned char i;
+    P0 = 0xff;
+    P1 = 0xff;
+    P2 = 0xff;
+    P3 = 0xff;
+    for (i = 0; i < 8; i++) 
+    {
+        P0 = Tab11[i];
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        P2 = Tab11[i];
+        delay(10);
+    }
+    P0 = 0xff;
+    P2 = 0xff;
+    for (i = 0; i < 8; i++) 
+    {
+        P3 = Tab22[i];
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        P1 = Tab22[i];
+        delay(10);
+    }
+    P1 = 0xff;
+    P3 = 0xff;
+}
+
+void hy2_3(void)  //
+{
+    unsigned char i;
+    P0 = 0xff;
+    P1 = 0xff;
+    P2 = 0xff;
+    P3 = 0xff;
+    for (i = 0; i < 8; i++) 
+    {
+        P0 = Tab11[i];
+        P1 = Tab11[i];
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        P2 = Tab11[i];
+        P3 = Tab11[i];
+        delay(10);
+    }
+    flag = 100;
+    for (i = 0; i < 8; i++) 
+    {
+        P2 = Tab33[i];
+        P3 = Tab33[i];
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        P0 = Tab33[i];
+        P1 = Tab33[i];
+        delay(10);
+        flag = 200;
+    }
+}
+
+void hy2_4(void)  //°μ?D??ê±??×a360?￡￡¨ò???ò???μ?áá￡?
+{
+    unsigned char i;
+    P0 = 0xff;
+    P1 = 0xff;
+    P2 = 0xff;
+    P3 = 0xff;
+    for (i = 0; i < 8; i++) 
+    {
+        P0 = Tab11[i];
+        P3 = Tab22[i];
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        P2 = Tab11[i];
+        P1 = Tab22[i];
+        delay(10);
+    }
+    flag = 100;
+    for (i = 0; i < 8; i++) 
+    {
+        P0 = Tab44[i];
+        P3 = Tab5[i];
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        P2 = Tab44[i];
+        P1 = Tab5[i];
+        delay(10);
+    }
+    flag = 200;
+}
+
+void hy5(void)  //?è?ò??éì?1￡?è?oó?òé?éì?1?e?￥μ?áá
+{
+    unsigned char i;
+    for (i = 0; i < 8; i++) 
+    {
+        P0 = Tab8[i];
+        P1 = Tab8[i];
+        delay(10);
+    }
+    P0 = 0xff;
+    P1 = 0xff;
+    for (i = 0; i < 8; i++) 
+    {
+        P2 = Tab8[i];
+        P3 = Tab8[i];
+        delay(10);
+    }
+    P2 = 0xff;
+    P3 = 0xff;
+    for (i = 0; i < 8; i++) 
+    {
+        P2 = Tab7[i];
+        P3 = Tab7[i];
+        delay(10);
+    }
+    P2 = 0xff;
+    P3 = 0xff;
+    for (i = 0; i < 8; i++) 
+    {
+        P0 = Tab7[i];
+        P1 = Tab7[i];
+        delay(10);
+    }
+    P0 = 0xff;
+    P1 = 0xff;
+}
+
+void jr(void)//???￡
+{
+    unsigned char i;
+    for (i = 0; i < 9; i++)  //8????????
+    {
+        P0 = Tab1[i];
+        P1 = Tab1[i];
+        P2 = Tab2[i];
+        P3 = Tab2[i];
+        delay(10);
+    }
+    for (i = 0; i < 9; i++) 
+    {
+        P0 = Tab2[i];
+        P1 = Tab2[i];
+        P2 = Tab1[i];
+        P3 = Tab1[i];
+        delay(10);
+    }
+    for (i = 0; i < 9; i++)  
+    {
+        P0 = Tab1[i];
+        P1 = Tab1[i];
+        P2 = Tab2[i];
+        P3 = Tab2[i];
+        delay(10);
+    }
+    for (i = 0; i < 9; i++) 
+    {
+        P0 = Tab2[i];
+        P1 = Tab2[i];
+        P2 = Tab1[i];
+        P3 = Tab1[i];
+        delay(10);
+    }
+    xl(); //D?D??￡??
+    xl(); //D?D??￡??
+    for (i = 0; i < 9; i++) 
+    {
+        P0 = Tab3[i]; 
+        P1 = Tab3[i];
+        P2 = Tab4[i]; 
+        P3 = Tab4[i];
+        delay(10);
+    }
+    for (i = 0; i < 9; i++) 
+    {
+        P0 = Tab4[i];
+        P1 = Tab4[i];
+        P2 = Tab3[i];
+        P3 = Tab4[i];
+        delay(10);
+    }
+
+    for (i = 0; i < 9; i++) 
+    {
+        P0 = Tab1[i];
+        P1 = Tab1[i];
+        P2 = Tab2[i]; 
+        P3 = Tab2[i];
+        delay(10);
+    }
+
+    for (i = 0; i < 9; i++)  
+    {
+        P0 = Tab4[i];
+        P1 = Tab4[i];
+        P2 = Tab3[i];
+        P3 = Tab3[i];
+        delay(10);
+    }
+    for (i = 0; i < 9; i++) 
+    {
+        P0 = Tab3[i]; 
+        P1 = Tab3[i];
+        P2 = Tab4[i];
+        P3 = Tab4[i];
+        delay(10);
+    }
+    for (i = 0; i < 9; i++) 
+    {
+        P0 = Tab2[i];
+        P1 = Tab2[i];
+        P2 = Tab1[i];
+        P3 = Tab1[i];
+        delay(10);
+    }
+}
+void azzy(void)  //°μ?D?ò??
+{
+    unsigned char i;
+    flag = 200;
+    for (i = 0; i < 8; i++) 
+    {
+        P2 = 0xff;
+        P3 = 0xff;
+        P1 = Tab1[i];
+        P0 = Tab1[i];
+        delay(10);
+    }
+    for (i = 0; i < 9; i++) 
+    {
+        P1 = 0xff;
+        P0 = 0xff;
+        P2 = Tab1[i];
+        P3 = Tab1[i];
+        delay(10);
+    }
+}
+
+void azyy(void)  //°μ?Dyouò?
+{
+    unsigned char i;
+    for (i = 0; i < 8; i++) 
+    {
+        P0 = 0xff;
+        P1 = 0xff;
+        P2 = Tab2[i];
+        P3 = Tab2[i];
+        delay(10);
+			        delay(10);
+    }
+    for (i = 0; i < 9; i++) 
+    {
+        P0 = Tab2[i];
+        P1 = Tab2[i];
+        delay(10);
+    }
+}
+
+void led_flow1(void)  
+{
+    unsigned char i;
+    for (i = 0; i < 9; i++) 
+    {
+        P2 = 0;
+        P3 = 0;
+        P1 = Tab3[i];
+        P0 = Tab3[i];
+        delay(10);
+    }
+    for (i = 0; i < 9; i++)  
+    {
+        P2 = Tab3[i];
+        P3 = Tab3[i];
+        delay(10);
+    }
+}
+
+void lzyy(void)  //áá?Dóòò?
+{
+    unsigned char i;
+    for (i = 0; i < 9; i++)  
+    {
+        P0 = 0x00;
+        P1 = 0x00;
+        P2 = Tab4[i];
+        P3 = Tab4[i];
+        delay(10);
+    }
+    for (i = 0; i < 9; i++)  
+    {
+        P0 = Tab4[i];
+        P1 = Tab4[i];
+        delay(10);
+    }
+}
+
+void shansuo(void)//è?2?μ?éá??
+{
+    uchar i;
+    for (i = 0; i < 3; i++)
+    {
+        P0 = 0xff;
+        P1 = 0xff;
+        P2 = 0xff;
+        P3 = 0xff;
+        delay(10);
+        delay(10);
+        P0 = 0x00;
+        P1 = 0x00;
+        P2 = 0x00;
+        P3 = 0x00;
+        delay(10);
+        delay(10);
+    }
+}
+
+void xl(void)//?àáúá???±???
+{
+    uchar i;
+    for (i = 0; i < 3; i++)
+    {
+        P0 = 0xAA;
+        P1 = 0xAA;
+        P2 = 0xAA;
+        P3 = 0xAA;
+        delay(10);
+        delay(10);
+        P0 = 0x55;
+        P1 = 0x55;
+        P2 = 0x55;
+        P3 = 0x55;
+        delay(10);
+        delay(10);
+    }
+}
+
+void sxb(void)//é???°?
+{
+    unsigned char i;
+    P0 = 0xff;
+    P1 = 0xff;
+    P2 = 0x00;
+    P3 = 0x00;
+    delay(10);
+    delay(10);
+    delay(10);
+    delay(10);
+    for (i = 0; i < 8; i++) 
+    {
+        P0 = Tab11[i];
+        P1 = Tab11[i];
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        P0 = Tab11[i];
+        P1 = Tab11[i];
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        P0 = Tab11[i];
+        P1 = Tab11[i];
+        delay(10);
+    }
+    for (i = 0; i < 3; i++)
+    { 
+        P0 = 0x00;
+        P1 = 0x00;
+        delay(10);
+        delay(10);
+        P0 = 0xff;
+        P1 = 0xff;
+        delay(10);
+        delay(10);
+    }
+}
+
+void jc(void)//
+{
+    uchar i;
+    for (i = 0; i < 3; i++) 
+    {
+        P0 = 0x00;
+        P3 = 0x00;
+        P1 = 0xff;
+        P2 = 0xff;
+        delay(10);
+        delay(10);
+        delay(10);
+        delay(10);
+        P1 = 0x00;
+        P2 = 0x00;
+        P0 = 0xff;
+        P3 = 0xff;
+        delay(10);
+        delay(10);
+        delay(10);
+        delay(10);
+    }
+}
+
+void azzy_1(void)  //°μ?D?ò??
+{
+    unsigned char i, i1;
+    for (flag = 80; flag > 0; flag = flag - 10)
+    {
+        for (i = 0; i < 8; i++) 
+        {
+            P2 = 0xff;
+            P3 = 0xff;
+            P1 = Tab1[i];
+            P0 = Tab1[i];
+            delay(10);
+        }
+        for (i = 0; i < 9; i++) 
+        {
+            P1 = 0xff;
+            P0 = 0xff;
+            P2 = Tab1[i];
+            P3 = Tab1[i];
+            delay(10);
+        }
+    }
+    flag = 10;
+    for (i1 = 0; i1 < 30; i1++)
+    {
+        for (i = 0; i < 8; i++) 
+        {
+            P2 = 0xff;
+            P3 = 0xff;
+            P1 = Tab1[i];
+            P0 = Tab1[i];
+            delay(10);
+        }
+        for (i = 0; i < 9; i++) 
+        {
+            P1 = 0xff;
+            P0 = 0xff;
+            P2 = Tab1[i];
+            P3 = Tab1[i];
+            delay(10);
+        }
+    }
+    flag = 200;
+}
+
+void js(void)//?áê?
+{
+    uchar i;
+    hy2_3();
+    for (i = 0; i < 3; i++) 
+    {
+        P0 = 0xff;
+        P2 = 0xff;
+        delay(10);
+        delay(10);
+        P0 = 0x00;
+        P2 = 0x00;
+        delay(10);
+        delay(10);
+    }
+    for (i = 0; i < 3; i++) 
+    {
+        P1 = 0xff;
+        P3 = 0xff;
+        delay(10);
+        delay(10);
+        P1 = 0x00;
+        P3 = 0x00;
+        delay(10);
+        delay(10);
+    }
+    for (i = 0; i < 3; i++) 
+    {
+        P1 = 0x00;
+        P3 = 0x00;
+        P0 = 0x00;
+        P2 = 0x00;
+        delay(10);
+        delay(10);
+        P1 = 0xff;
+        P3 = 0xff;
+        P0 = 0xff;
+        P2 = 0xff;
+        delay(10);
+        delay(10);
+    }
+}
+
+void main(void)
+{
+    Timer0_Init();
+    while (1)
+    {
+        azzy_1();
+        hy2(); 
+        hy3(); 
+        hy2_1();
+        hy2_2();
+        hy2_3();
+        hy3();
+        hy2_4();
+        hy1(); 
+        jc();
+        hy1();
+        hy4(); 
+        jc();
+        hy4();
+        hy5();
+        jr();
+        azzy();
+        azyy();
+        xl(); 
+        shansuo();
+        led_flow1();
+        lzyy();    
+        led_flow1();
+        azyy();
+        shansuo();
+        sxb();
+        azzy();
+        lzyy();
+        azzy();
+        lzyy();
+        shansuo();
+        azyy();
+        lzyy();
+        azyy();
+        lzyy();
+        shansuo();
+        js();
+    }
+}
+
+void Timer0_Init(void)
+{
+    TMOD &= 0xF0; // 清除定时器0模式位
+    TMOD |= 0x01; // 设置定时器0为模式1（16位定时器）
+    TH0 = (65536 - 50000) >> 8; // 装入高8位初值，50000对应约50ms延时
+    TL0 = (65536 - 50000) & 0xFF; // 装入低8位初值
+    ET0 = 1; // 允许定时器0中断
+    EA = 1; // 开总中断
+    TR0 = 1; // 启动定时器0
+}
