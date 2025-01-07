@@ -1,0 +1,910 @@
+#include <STC89C5xRC.h> 
+// 定义无符号字符类型的别名
+#define uchar unsigned char  
+
+uchar flag = 200;
+// 定义数组Tab1，用于存储特定的字节值，注释表明其功能为暗中左移（向下）
+uchar code Tab1[] = {0xFE, 0xFD, 0xFB, 0xF7, 0xEF, 0xDF, 0xBF, 0x7F, 0xFF}; 
+// 定义数组Tab2，用于存储特定的字节值，注释表明其功能为暗中右移（向下）
+uchar code Tab2[] = {0x7F, 0xBF, 0xDF, 0xEF, 0xF7, 0xFB, 0xFD, 0xFE, 0xFF}; 
+// 定义数组Tab3，用于存储特定的字节值，注释表明其功能为亮中左移（向下）
+uchar code Tab3[] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x00}; 
+// 定义数组Tab4，用于存储特定的字节值，注释表明其功能为亮中右移（向下）
+uchar code Tab4[] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01, 0x00}; 
+// 定义数组Tab11，用于存储特定的字节值，注释表明其功能为暗中左移（向下）
+uchar code Tab11[] = {0xFE, 0xFC, 0xF8, 0xF0, 0xE0, 0xC0, 0x80, 0x00, 0xff}; 
+// 定义数组Tab22，用于存储特定的字节值，注释表明其功能为暗中左移（向下）
+uchar code Tab22[] = {0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01, 0x00, 0xff}; 
+
+uchar code Tab33[] = {0x80, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC, 0xFE, 0xFF};
+uchar code Tab44[] = {0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF};
+uchar code Tab55[] = {0x08, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC, 0xFE, 0xFF, 0xFF};
+uchar code Tab5[] = {0x00, 0x80, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC, 0xFE, 0xff};
+uchar code Tab6[] = {0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xff};
+uchar code Tab7[] = {0x7f, 0xbf, 0xdf, 0xef, 0xf7, 0xfb, 0xfd, 0xfe};
+uchar code Tab8[] = {0xfe, 0xfd, 0xfb, 0xf7, 0xef, 0xdf, 0xbf, 0x7f};
+
+// 函数声明
+void shansuo();
+// 函数声明
+void xl();
+// 函数声明，参数为无符号整型time
+void delay(unsigned int time);
+// 函数声明
+void Timer0_Init(void);
+// 函数声明
+void jc(void);
+// 函数声明
+void led_flow1(void);
+// 函数声明
+void lzyy(void);
+// 函数声明
+void sxb(void);
+// 函数声明
+void js(void);
+// 函数声明
+void azzy_1(void);
+
+// 定时器0中断服务函数
+volatile unsigned int timer0_count = 0;
+// 定时器0中断服务函数定义，interrupt 1表示该函数为定时器0中断服务程序
+void Timer0_ISR(void) interrupt 1
+{
+    // 重装定时器0高8位初值，50000对应约50ms延时
+    TH0 = (65536 - 50000) >> 8; 
+    // 重装定时器0低8位初值
+    TL0 = (65536 - 50000) & 0xFF; 
+    // 定时器计数变量自增
+    timer0_count++;
+}
+
+// 新的延时函数定义
+void delay(unsigned int time)
+{
+    // 初始化定时器计数变量
+    timer0_count = 0;
+    // 循环等待，直到定时器计数达到指定时间
+    while (timer0_count < time); 
+}
+
+// 函数定义：点亮状态逆时针旋转90度（一个一个点亮）
+void hy1(void)  
+{
+    unsigned char i;
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P0口赋值Tab11数组中的值
+        P0 = Tab11[i];
+        // 向P1口赋值Tab22数组中的值
+        P1 = Tab22[i];
+        // 向P2口赋值Tab11数组中的值
+        P2 = Tab11[i];
+        // 向P3口赋值Tab22数组中的值
+        P3 = Tab22[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P0口赋值Tab44数组中的值
+        P0 = Tab44[i];
+        // 向P1口赋值Tab55数组中的值
+        P1 = Tab55[i];
+        // 向P2口赋值Tab44数组中的值
+        P2 = Tab44[i];
+        // 向P3口赋值Tab55数组中的值
+        P3 = Tab55[i];
+        // 调用延时函数
+        delay(10);
+    }
+}
+
+// 函数定义：暗中逆时针转360度（一个一个点亮）
+void hy2(void)  
+{
+    unsigned char i;
+    for (flag = 250; flag > 0; flag = flag - 50)
+    {
+        // 将P0口设置为全高电平
+        P0 = 0xff;
+        // 将P1口设置为全高电平
+        P1 = 0xff;
+        // 将P2口设置为全高电平
+        P2 = 0xff;
+        // 将P3口设置为全高电平
+        P3 = 0xff;
+        for (i = 0; i < 8; i++) 
+        {
+            // 向P0口赋值Tab11数组中的值
+            P0 = Tab11[i];
+            // 调用延时函数
+            delay(10);
+        }
+        for (i = 0; i < 8; i++) 
+        {
+            // 向P2口赋值Tab11数组中的值
+            P2 = Tab11[i];
+            // 调用延时函数
+            delay(10);
+        }
+        for (i = 0; i < 8; i++) 
+        {
+            // 向P3口赋值Tab22数组中的值
+            P3 = Tab22[i];
+            // 调用延时函数
+            delay(10);
+        }
+        for (i = 0; i < 8; i++) 
+        {
+            // 向P1口赋值Tab22数组中的值
+            P1 = Tab22[i];
+            // 调用延时函数
+            delay(10);
+        }
+    }
+    // 重置flag的值为250
+    flag = 250;
+}
+
+// 函数定义：点亮中逆时针转360度（一个一个灭）
+void hy3(void)  
+{
+    unsigned char i;
+    // 设置flag的值为50
+    flag = 50;
+    // 将P0口设置为全低电平
+    P0 = 0x00;
+    // 将P1口设置为全低电平
+    P1 = 0x00;
+    // 将P2口设置为全低电平
+    P2 = 0x00;
+    // 将P3口设置为全低电平
+    P3 = 0x00;
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P0口赋值Tab44数组中的值
+        P0 = Tab44[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P2口赋值Tab44数组中的值
+        P2 = Tab44[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P3口赋值Tab33数组中的值
+        P3 = Tab33[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P1口赋值Tab33数组中的值
+        P1 = Tab33[i];
+        // 调用延时函数
+        delay(10);
+    }
+    // 设置flag的值为150
+    flag = 150;
+}
+
+// 函数定义：点亮状态逆顺时针旋转90度（一个一个点亮）
+void hy4(void)  
+{
+    unsigned char i;
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P1口赋值Tab11数组中的值
+        P1 = Tab11[i];
+        // 向P0口赋值Tab22数组中的值
+        P0 = Tab22[i];
+        // 向P2口赋值Tab11数组中的值
+        P2 = Tab11[i];
+        // 向P3口赋值Tab22数组中的值
+        P3 = Tab22[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 9; i++) 
+    {
+        // 向P1口赋值Tab6数组中的值
+        P1 = Tab6[i];
+        // 向P0口赋值Tab5数组中的值
+        P0 = Tab5[i];
+        // 向P2口赋值Tab6数组中的值
+        P2 = Tab6[i];
+        // 向P3口赋值Tab5数组中的值
+        P3 = Tab5[i];
+        // 调用延时函数
+        delay(10);
+    }
+}
+
+// 函数定义：功能标识为“°”
+void hy2_1(void)  
+{
+    unsigned char i;
+    // 设置flag的值为200
+    flag = 200;
+    // 将P0口设置为全高电平
+    P0 = 0xff;
+    // 将P1口设置为全高电平
+    P1 = 0xff;
+    // 将P2口设置为全高电平
+    P2 = 0xff;
+    // 将P3口设置为全高电平
+    P3 = 0xff;
+    for (i = 0; i < 9; i++) 
+    {
+        // 向P0口赋值Tab11数组中的值
+        P0 = Tab11[i];
+        // 调用延时函数
+        delay(10);
+    }
+    // 设置flag的值为110
+    flag = 110;
+    for (i = 0; i < 9; i++) 
+    {
+        // 向P2口赋值Tab11数组中的值
+        P2 = Tab11[i];
+        // 调用延时函数
+        delay(10);
+    }
+    // 设置flag的值为80
+    flag = 80;
+    for (i = 0; i < 9; i++) 
+    {
+        // 向P3口赋值Tab22数组中的值
+        P3 = Tab22[i];
+        // 调用延时函数
+        delay(10);
+    }
+    // 设置flag的值为80
+    flag = 80;
+    for (i = 0; i < 9; i++) 
+    {
+        // 向P1口赋值Tab22数组中的值
+        P1 = Tab22[i];
+        // 调用延时函数
+        delay(10);
+    }
+}
+
+// 函数定义：功能标识为空（可能是未明确功能）
+void hy2_2(void)  
+{
+    unsigned char i;
+    // 将P0口设置为全高电平
+    P0 = 0xff;
+    // 将P1口设置为全高电平
+    P1 = 0xff;
+    // 将P2口设置为全高电平
+    P2 = 0xff;
+    // 将P3口设置为全高电平
+    P3 = 0xff;
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P0口赋值Tab11数组中的值
+        P0 = Tab11[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P2口赋值Tab11数组中的值
+        P2 = Tab11[i];
+        // 调用延时函数
+        delay(10);
+    }
+    // 将P0口设置为全高电平
+    P0 = 0xff;
+    // 将P2口设置为全高电平
+    P2 = 0xff;
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P3口赋值Tab22数组中的值
+        P3 = Tab22[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P1口赋值Tab22数组中的值
+        P1 = Tab22[i];
+        // 调用延时函数
+        delay(10);
+    }
+    // 将P1口设置为全高电平
+    P1 = 0xff;
+    // 将P3口设置为全高电平
+    P3 = 0xff;
+}
+
+// 函数定义：功能标识为空（可能是未明确功能）
+void hy2_3(void)  
+{
+    unsigned char i;
+    // 将P0口设置为全高电平
+    P0 = 0xff;
+    // 将P1口设置为全高电平
+    P1 = 0xff;
+    // 将P2口设置为全高电平
+    P2 = 0xff;
+    // 将P3口设置为全高电平
+    P3 = 0xff;
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P0口赋值Tab11数组中的值
+        P0 = Tab11[i];
+        // 向P1口赋值Tab11数组中的值
+        P1 = Tab11[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P2口赋值Tab11数组中的值
+        P2 = Tab11[i];
+        // 向P3口赋值Tab11数组中的值
+        P3 = Tab11[i];
+        // 调用延时函数
+        delay(10);
+    }
+    // 设置flag的值为100
+    flag = 100;
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P2口赋值Tab33数组中的值
+        P2 = Tab33[i];
+        // 向P3口赋值Tab33数组中的值
+        P3 = Tab33[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P0口赋值Tab33数组中的值
+        P0 = Tab33[i];
+        // 向P1口赋值Tab33数组中的值
+        P1 = Tab33[i];
+        // 调用延时函数
+        delay(10);
+        // 设置flag的值为200
+        flag = 200;
+    }
+}
+
+// 函数定义：功能为“°μ?D??ê±??×a360?￡￡¨ò???ò???μ?áá￡?”（可能是特定的LED显示效果）
+void hy2_4(void)  
+{
+    unsigned char i;
+    // 将P0口设置为全高电平
+    P0 = 0xff;
+    // 将P1口设置为全高电平
+    P1 = 0xff;
+    // 将P2口设置为全高电平
+    P2 = 0xff;
+    // 将P3口设置为全高电平
+    P3 = 0xff;
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P0口赋值Tab11数组中的值
+        P0 = Tab11[i];
+        // 向P3口赋值Tab22数组中的值
+        P3 = Tab22[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P2口赋值Tab11数组中的值
+        P2 = Tab11[i];
+        // 向P1口赋值Tab22数组中的值
+        P1 = Tab22[i];
+        // 调用延时函数
+        delay(10);
+    }
+    // 设置flag的值为100
+    flag = 100;
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P0口赋值Tab44数组中的值
+        P0 = Tab44[i];
+        // 向P3口赋值Tab5数组中的值
+        P3 = Tab5[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P2口赋值Tab44数组中的值
+        P2 = Tab44[i];
+        // 向P1口赋值Tab5数组中的值
+        P1 = Tab5[i];
+        // 调用延时函数
+        delay(10);
+    }
+    // 设置flag的值为200
+    flag = 200;
+}
+
+// 函数定义：功能为“?è?ò??éì?1￡?è?oó?òé?éì?1?e?￥μ?áá”（可能是特定的LED闪烁或流动效果）
+void hy5(void)  
+{
+    unsigned char i;
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P0口赋值Tab8数组中的值
+        P0 = Tab8[i];
+        // 向P1口赋值Tab8数组中的值
+        P1 = Tab8[i];
+        // 调用延时函数
+        delay(10);
+    }
+    // 将P0口设置为全高电平
+    P0 = 0xff;
+    // 将P1口设置为全高电平
+    P1 = 0xff;
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P2口赋值Tab8数组中的值
+        P2 = Tab8[i];
+        // 向P3口赋值Tab8数组中的值
+        P3 = Tab8[i];
+        // 调用延时函数
+        delay(10);
+    }
+    // 将P2口设置为全高电平
+    P2 = 0xff;
+    // 将P3口设置为全高电平
+    P3 = 0xff;
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P2口赋值Tab7数组中的值
+        P2 = Tab7[i];
+        // 向P3口赋值Tab7数组中的值
+        P3 = Tab7[i];
+        // 调用延时函数
+        delay(10);
+    }
+    // 将P2口设置为全高电平
+    P2 = 0xff;
+    // 将P3口设置为全高电平
+    P3 = 0xff;
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P0口赋值Tab7数组中的值
+        P0 = Tab7[i];
+        // 向P1口赋值Tab7数组中的值
+        P1 = Tab7[i];
+        // 调用延时函数
+        delay(10);
+    }
+    // 将P0口设置为全高电平
+    P0 = 0xff;
+    // 将P1口设置为全高电平
+    P1 = 0xff;
+}
+
+// 函数定义：功能标识为“???￡”（可能是特定的LED交互或显示逻辑）
+void jr(void)  
+{
+    unsigned char i;
+    for (i = 0; i < 9; i++)  // 循环9次，注释表明这里是8个相关操作
+    {
+        // 向P0口赋值Tab1数组中的值
+        P0 = Tab1[i];
+        // 向P1口赋值Tab1数组中的值
+        P1 = Tab1[i];
+        // 向P2口赋值Tab2数组中的值
+        P2 = Tab2[i];
+        // 向P3口赋值Tab2数组中的值
+        P3 = Tab2[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 9; i++) 
+    {
+        // 向P0口赋值Tab2数组中的值
+        P0 = Tab2[i];
+        // 向P1口赋值Tab2数组中的值
+        P1 = Tab2[i];
+        // 向P2口赋值Tab1数组中的值
+        P2 = Tab1[i];
+        // 向P3口赋值Tab1数组中的值
+        P3 = Tab1[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 9; i++)  
+    {
+        // 向P0口赋值Tab1数组中的值
+        P0 = Tab1[i];
+        // 向P1口赋值Tab1数组中的值
+        P1 = Tab1[i];
+        // 向P2口赋值Tab2数组中的值
+        P2 = Tab2[i];
+        // 向P3口赋值Tab2数组中的值
+        P3 = Tab2[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 9; i++) 
+    {
+        // 向P0口赋值Tab2数组中的值
+        P0 = Tab2[i];
+        // 向P1口赋值Tab2数组中的值
+        P1 = Tab2[i];
+        // 向P2口赋值Tab1数组中的值
+        P2 = Tab1[i];
+        // 向P3口赋值Tab1数组中的值
+        P3 = Tab1[i];
+        // 调用延时函数
+        delay(10);
+    }
+    // 调用函数xl，注释含义不明，可能是特定的LED状态切换或其他操作
+    xl(); 
+    // 再次调用函数xl
+    xl(); 
+    for (i = 0; i < 9; i++) 
+    {
+        // 向P0口赋值Tab3数组中的值
+        P0 = Tab3[i]; 
+        // 向P1口赋值Tab3数组中的值
+        P1 = Tab3[i];
+        // 向P2口赋值Tab4数组中的值
+        P2 = Tab4[i]; 
+        // 向P3口赋值Tab4数组中的值
+        P3 = Tab4[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 9; i++) 
+    {
+        // 向P0口赋值Tab4数组中的值
+        P0 = Tab4[i];
+        // 向P1口赋值Tab4数组中的值
+        P1 = Tab4[i];
+        // 向P2口赋值Tab3数组中的值
+        P2 = Tab3[i];
+        // 向P3口赋值Tab4数组中的值
+        P3 = Tab4[i];
+        // 调用延时函数
+        delay(10);
+    }
+
+    for (i = 0; i < 9; i++) 
+    {
+        // 向P0口赋值Tab1数组中的值
+        P0 = Tab1[i];
+        // 向P1口赋值Tab1数组中的值
+        P1 = Tab1[i];
+        // 向P2口赋值Tab2数组中的值
+        P2 = Tab2[i]; 
+        // 向P3口赋值Tab2数组中的值
+        P3 = Tab2[i];
+        // 调用延时函数
+        delay(10);
+    }
+
+    for (i = 0; i < 9; i++)  
+    {
+        // 向P0口赋值Tab4数组中的值
+        P0 = Tab4[i];
+        // 向P1口赋值Tab4数组中的值
+        P1 = Tab4[i];
+        // 向P2口赋值Tab3数组中的值
+        P2 = Tab3[i];
+        // 向P3口赋值Tab3数组中的值
+        P3 = Tab3[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 9; i++) 
+    {
+        // 向P0口赋值Tab3数组中的值
+        P0 = Tab3[i]; 
+        // 向P1口赋值Tab3数组中的值
+        P1 = Tab3[i];
+        // 向P2口赋值Tab4数组中的值
+        P2 = Tab4[i];
+        // 向P3口赋值Tab4数组中的值
+        P3 = Tab4[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 9; i++) 
+    {
+        // 向P0口赋值Tab2数组中的值
+        P0 = Tab2[i];
+        // 向P1口赋值Tab2数组中的值
+        P1 = Tab2[i];
+        // 向P2口赋值Tab1数组中的值
+        P2 = Tab1[i];
+        // 向P3口赋值Tab1数组中的值
+        P3 = Tab1[i];
+        // 调用延时函数
+        delay(10);
+    }
+}
+
+// 函数定义：功能为“°μ?D?ò??”（可能是特定方向的LED显示效果）
+void azzy(void)  
+{
+    unsigned char i;
+    // 设置flag的值为200
+    flag = 200;
+    for (i = 0; i < 8; i++) 
+    {
+        // 将P2口设置为全高电平
+        P2 = 0xff;
+        // 将P3口设置为全高电平
+        P3 = 0xff;
+        // 向P1口赋值Tab1数组中的值
+        P1 = Tab1[i];
+        // 向P0口赋值Tab1数组中的值
+        P0 = Tab1[i];
+        // 调用延时函数
+        delay(10);
+    }
+    for (i = 0; i < 9; i++) 
+    {
+        // 将P1口设置为全高电平
+        P1 = 0xff;
+        // 将P0口设置为全高电平
+        P0 = 0xff;
+        // 向P2口赋值Tab1数组中的值
+        P2 = Tab1[i];
+        // 向P3口赋值Tab1数组中的值
+        P3 = Tab1[i];
+        // 调用延时函数
+        delay(10);
+    }
+}
+
+// 函数定义：功能为“°μ?Dyouò?”（可能是特定方向的LED显示效果）
+void azyy(void)  
+{
+    unsigned char i;
+    for (i = 0; i < 8; i++) 
+    {
+        // 将P0口设置为全高电平
+        P0 = 0xff;
+        // 将P1口设置为全高电平
+        P1 = 0xff;
+        // 向P2口赋值Tab2数组中的值
+        P2 = Tab2[i];
+        // 向P3口赋值Tab2数组中的值
+        P3 = Tab2[i];
+        // 调用延时函数两次
+        delay(10);
+        delay(10);
+    }
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P0口赋值Tab2数组中的值
+        P0 = Tab2[i];
+        // 向P1口赋值Tab2数组中的值
+        P1 = Tab2[i];
+        // 将P2口设置为全高电平
+        P2 = 0xff;
+        // 将P3口设置为全高电平
+        P3 = 0xff;
+        // 调用延时函数两次
+        delay(10);
+        delay(10);
+    }
+    // 新增部分，从Tab7数组取值显示
+    for (i = 0; i < 8; i++) 
+    {
+        // 向P0口赋值Tab7数组中的值
+        P0 = Tab7[i];
+        // 向P1口赋值Tab7数组中的值
+        P1 = Tab7[i];
+        // 将P2口设置为全低电平
+        P2 = 0x00;
+        // 将P3口设置为全低电平
+        P3 = 0x00;
+        // 调用延时函数两次
+        delay(10);
+        delay(10);
+    }
+    // 再从Tab8数组取值显示
+    for (i = 0; i < 8; i++) 
+    {
+        // 将P0口设置为全低电平
+        P0 = 0x00;
+        // 将P1口设置为全低电平
+        P1 = 0x00;
+        // 向P2口赋值Tab8数组中的值
+        P2 = Tab8[i];
+        // 向P3口赋值Tab8数组中的值
+        P3 = Tab8[i];
+        // 调用延时函数两次
+        delay(10);
+        delay(10);
+    }
+    // 以全亮全灭闪烁结束
+    for (i = 0; i < 3; i++) 
+    {
+        // 将P0口设置为全高电平
+        P0 = 0xff;
+        // 将P1口设置为全高电平
+        P1 = 0xff;
+        // 将P2口设置为全高电平
+        P2 = 0xff;
+        // 将P3口设置为全高电平
+        P3 = 0xff;
+        // 调用延时函数两次
+        delay(10);
+        delay(10);
+        // 将P0口设置为全低电平
+        P0 = 0x00;
+        // 将P1口设置为全低电平
+        P1 = 0x00;
+        // 将P2口设置为全低电平
+        P2 = 0x00;
+        // 将P3口设置为全低电平
+        P3 = 0x00;
+        // 调用延时函数两次
+        delay(10);
+        delay(10);
+    }
+}
+// 主函数
+void main(void)
+{
+    // 初始化定时器0
+    Timer0_Init();
+    while (1)
+    {
+        // 调用函数azzy_1，功能未知
+        azzy_1();
+        // 调用函数hy2，实现暗中逆时针转360度（一个一个点亮）
+        hy2(); 
+        // 调用函数hy3，实现点亮中逆时针转360度（一个一个灭）
+        hy3(); 
+        // 调用函数hy2_1，功能标识为“°”
+        hy2_1();
+        // 调用函数hy2_2，功能标识为空（可能未明确）
+        hy2_2();
+        // 调用函数hy2_3，功能标识为空（可能未明确）
+        hy2_3();
+        // 调用函数hy3，实现点亮中逆时针转360度（一个一个灭）
+        hy3();
+        // 调用函数hy2_4，功能为“°μ?D??ê±??×a360?￡￡¨ò???ò???μ?áá￡?”
+        hy2_4();
+        // 调用函数hy1，实现点亮状态逆时针旋转90度（一个一个点亮）
+        hy1(); 
+        // 调用函数jc，功能未知
+        jc();
+        // 调用函数hy1，实现点亮状态逆时针旋转90度（一个一个点亮）
+        hy1();
+        // 调用函数hy4，实现点亮状态逆顺时针旋转90度（一个一个点亮）
+        hy4(); 
+        // 调用函数jc，功能未知
+        jc();
+        // 调用函数hy4，实现点亮状态逆顺时针旋转90度（一个一个点亮）
+        hy4();
+        // 调用函数hy5，功能为“?è?ò??éì?1￡?è?oó?òé?éì?1?e?￥μ?áá”
+        hy5(); 
+        // 调用函数jr，功能标识为“???￡”
+        jr(); 
+        // 调用函数azzy，功能为“°μ?D?ò??”
+        azzy(); 
+        // 调用函数azyy，功能为“°μ?Dyouò?”
+        azyy(); 
+        // 调用函数shansuo，功能未知，可能是闪烁相关操作
+        shansuo(); 
+        // 调用函数led_flow1，功能未知，可能是LED流动效果相关操作
+        led_flow1(); 
+        // 调用函数lzyy，功能未知
+        lzyy(); 
+        // 调用函数sxb，功能未知
+        sxb(); 
+        // 调用函数js，功能未知
+        js(); 
+        // 调用函数xl，功能未知
+        xl(); 
+    }
+}
+
+// 假设这里开始定义之前声明但未定义的函数
+
+// 函数定义：实现闪烁功能，具体闪烁逻辑需根据实际情况确认
+void shansuo()
+{
+    unsigned char i;
+    for (i = 0; i < 5; i++)
+    {
+        P0 = 0xff;
+        P1 = 0xff;
+        P2 = 0xff;
+        P3 = 0xff;
+        delay(50);
+        P0 = 0x00;
+        P1 = 0x00;
+        P2 = 0x00;
+        P3 = 0x00;
+        delay(50);
+    }
+}
+
+// 函数定义：功能未知，这里简单示例为对P0口数据处理
+void xl()
+{
+    unsigned char temp = P0;
+    P0 = ~temp;
+    delay(20);
+}
+
+// 函数定义：初始化定时器0
+void Timer0_Init(void)
+{
+    TMOD &= 0xF0;        // 清除T0的控制位
+    TMOD |= 0x01;        // 设置T0为模式1（16位定时器）
+    TH0 = (65536 - 50000) >> 8; // 预装高8位初值，50000对应约50ms延时
+    TL0 = (65536 - 50000) & 0xFF; // 预装低8位初值
+    ET0 = 1;             // 使能T0中断
+    EA = 1;              // 使能总中断
+    TR0 = 1;             // 启动T0
+}
+
+// 函数定义：功能未知，这里简单示例为对P1口数据处理
+void jc()
+{
+    unsigned char temp = P1;
+    P1 = temp << 1;
+    delay(20);
+}
+
+// 函数定义：功能未知，可能是LED流动效果，这里简单示例为从左到右点亮LED
+void led_flow1()
+{
+    unsigned char i;
+    for (i = 0x01; i!= 0x00; i <<= 1)
+    {
+        P0 = i;
+        delay(50);
+    }
+}
+
+// 函数定义：功能未知，这里简单示例为对P2口数据处理
+void lzyy()
+{
+    unsigned char temp = P2;
+    P2 = temp ^ 0x55;
+    delay(20);
+}
+
+// 函数定义：功能未知，这里简单示例为对P3口数据处理
+void sxb()
+{
+    unsigned char temp = P3;
+    P3 = temp | 0x0F;
+    delay(20);
+}
+
+// 函数定义：功能未知，这里简单示例为对P0口和P1口数据处理
+void js()
+{
+    unsigned char temp1 = P0;
+    unsigned char temp2 = P1;
+    P0 = temp1 & temp2;
+    P1 = temp1 | temp2;
+    delay(20);
+}
+
+// 函数定义：功能未知，这里简单示例为对P2口和P3口数据处理
+void azzy_1()
+{
+    unsigned char temp1 = P2;
+    unsigned char temp2 = P3;
+    P2 = temp1 + temp2;
+    P3 = temp1 - temp2;
+    delay(20);
+}
